@@ -1,0 +1,316 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"party",
+				"party_history"
+			],
+			[
+				"conta",
+				"contaminated_person"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 335.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				":w",
+				":w - Save"
+			],
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"json",
+				"JSON Reindent: reindent file or selection"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"inden",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"spac",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"space",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"settings",
+				"Preferences: Settings"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
+			[
+				"pyth",
+				"Set Syntax: Python"
+			],
+			[
+				":",
+				":w - Save"
+			],
+			[
+				"javas",
+				"Set Syntax: JavaScript"
+			]
+		],
+		"width": 444.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/leogo/Dropbox/regis/MSDS/practicum_1/ldl"
+	],
+	"file_history":
+	[
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/docker/mongo-vagrant/Vagrantfile",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/docker/mongo-vagrant/mongodb-json-files/datasets/catalog.books.json",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/docker/mongo-vagrant/mongodb-json-files/datasets/json_data.json",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS682 - Text Analytics/week3/book.txt",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS682 - Text Analytics/week7/data.json",
+		"/C/Users/leogo/Downloads/get_data.py",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS682 - Text Analytics/week6/Health-News-Tweets/Health-Tweets/goodhealth.txt",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS682 - Text Analytics/week6/Health-News-Tweets/Health-Tweets/everydayhealth.txt",
+		"/C/Users/leogo/Anaconda3/Lib/site-packages/en_core_web_sm/__init__.py",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/docker/mysql-vagrant-master/mysql-vagrant-master/Vagrantfile",
+		"/C/Users/leogo/Downloads/getdata%2Fwksst8110 (1).for",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/week6/millionsongdataset.csv",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/week6/test_tracks.csv",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/week6/uni_millionsongdataset.csv",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/docker/mysql-vagrant-master/mysql-vagrant-master/install.sh",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS610/ambari-vagrant/centos7.3/Vagrantfile",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS610/ambari-vagrant/Vagrantfile",
+		"/C/Users/leogo/.vagrant.d/boxes/hashicorp-VAGRANTSLASH-precise64/1.1.0/virtualbox/Vagrantfile",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/week3/restaurants.xml",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS620 - Data Collection Preparation/week3/html_file.html",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week8/reinforced_learning/puzzle_game.py",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week7/assignment/abalone.data",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week3/spam/smsspamcollection/SMSSpamCollection",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week5/svm/agaricus-lepiota.data",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week5/svm/agaricus-lepiota.names",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week7/assignment/abalone.names",
+		"/C/Users/leogo/Dropbox/IFTTT/Fitbit/Fitbit Activity Log.csv.txt",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week1/nrg.tsv",
+		"/C/Users/leogo/Dropbox/regis/MSDS/MSDS680/week1/leo_godin_week1_practice.html",
+		"/C/Users/leogo/Dropbox/regis/MDSD600/week2/twitterstream_3_5_adj.py",
+		"/C/Users/leogo/AppData/Roaming/7DaysToDie/UserOptions.ini",
+		"/C/Users/leogo/Downloads/MapRed_exercise.sh",
+		"/C/Users/leogo/Downloads/dropbox.py",
+		"/C/Users/leogo/Dropbox/regis/MSDS610/ambari-vagrant/append-to-etc-hosts.txt",
+		"/C/Windows/System32/drivers/etc/hosts",
+		"/C/Users/leogo/Dropbox/regis/MDSD600/week2/get-pip.py",
+		"/C/Users/leogo/Documents/learning/test.py",
+		"/C/Users/leogo/Downloads/ceasar_cypher.py",
+		"/C/Users/leogo/AppData/Local/lxss/home/leo/test.txt",
+		"/C/Users/leogo/Dropbox/regis/SCI410/contagion/contagion.py"
+	],
+	"find":
+	{
+		"height": 40.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"cPickle",
+			"imp",
+			"your wage",
+			"New York",
+			"get_state_value",
+			"get_state_value(",
+			"next_state_values[move]",
+			"next_state_values[action]",
+			"move",
+			" ",
+			":\\s+",
+			".+\\d.\\s",
+			"leo",
+			"^[0-9]. ",
+			",",
+			"^",
+			"\\s+$",
+			"\\s",
+			" ",
+			"\\s",
+			"$",
+			"\\s",
+			"$",
+			"\\)",
+			"/",
+			"^.+\\(",
+			"\\",
+			"party_history",
+			"print"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"pickle",
+			"",
+			"next_state",
+			"policy[action]",
+			"action",
+			"",
+			"|",
+			"",
+			"\",",
+			"\"",
+			",",
+			"$",
+			"\\s,",
+			",",
+			"\\s$",
+			"",
+			",$",
+			"",
+			"/"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 39.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "ldl.sublime-project",
+	"replace":
+	{
+		"height": 72.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\Users\\leogo\\Dropbox\\regis\\MSDS\\MSDS680\\week3\\spam\\smsspamcollection\\SMSSpamCollection"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
