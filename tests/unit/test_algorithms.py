@@ -2,39 +2,56 @@ import sure
 import pytest
 import numpy as np
 from ldl.algorithms import relu_vec
+from ldl.algorithms import feed_forward
 
 
 def test_relu_vec_returns_correct_calculations():
-    # four observations with three variables
-    layer_output = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4]])
-    # Two neurons with three weights
-    weights = np.array([[1, 1, 1], [2, 2, 2]])
 
-    result = relu_vec(layer_output, weights)
+    # Activation of three observations feeding into a two-neuron layer
+    weighted_input = np.array([[-1, 1 ], [2, 0], [5, 5]])
 
-    result.should.have.length_of(4)
-    result[0].should.have.length_of(2)
-    result[0].tolist().should.equal([3, 6])
-    result[1].tolist().should.equal([6, 12])
-    result[2].tolist().should.equal([9, 18])
-    result[3].tolist().should.equal([12, 24])
+    activations = relu_vec(weighted_input)
 
-
-def test_relu_vec_handles_negative_results():
-    # Two observations with three variables
-    layer_output = np.array([[1, 1, 1], [2, 2, 2]])
-    # Two neurons with three weights
-    weights = np.array([[-1, -1, -1], [1, 1, 1]])
-
-    result = relu_vec(layer_output, weights)
-
-    result[0].tolist().should.equal([0, 3])
+    activations.should.have.length_of(3)
+    activations[0][0].should.equal(0)
+    activations[0][1].should.equal(1)
+    activations[1][0].should.equal(2)
+    activations[1][1].should.equal(0)
+    activations[2][0].should.equal(5)
+    activations[2][1].should.equal(5)
 
 
 def test_relu_vec_handles_various_sizes():
     # 100 x 4 input
-    layer_output = np.ones([100, 4])
-    # 15 neurons with four weights
-    weights = np.ones([14, 4])
+    weighted_input = np.ones([100, 4])
     relu_vec.when.called_with(
-        layer_output, weights).should_not.throw(Exception)
+        weighted_input).should_not.throw(Exception)
+
+    result = relu_vec(weighted_input)
+    result.should.have.length_of(100)
+    result[0].should.have.length_of(4)
+
+
+def test_feed_forward_does_not_fail_with_valid_parameters():
+    # Five layers, with two neurons as output
+    layers = [10, 15, 10, 5, 2]
+
+    # Example weights for a five-layer network
+    # Each set of weights has dimension L X L+1
+    weights = [
+        np.ones([10, 15]),
+        np.ones([15, 10]),
+        np.ones([10, 5]),
+        np.ones([5, 2])
+    ]
+
+
+    # One hundred observations, with five variables
+    data = np.ones([100, 10])
+
+    result = feed_forward(data=data, weights=weights, neurons=layers,
+                          activation_function=relu_vec)
+
+    result.should.be.a(np.ndarray)
+    result.should.have.length_of(100)
+    result[0].should.have.length_of(2)
