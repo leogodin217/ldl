@@ -2,7 +2,8 @@ import sure
 import pytest
 import numpy as np
 from ldl.algorithms import relu_vec
-from ldl.algorithms import feed_forward
+from ldl.algorithms import feed_forward_vec
+from ldl.algorithms import relu_vec_differential
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -31,8 +32,22 @@ def test_relu_vec_handles_various_sizes():
     result.should.have.length_of(100)
     result[0].should.have.length_of(4)
 
+def relu_vec_differential_calculates_correct_values():
+    activations = numpy.array([[-1, 0, 1, 2], [0.01, 2.5, 3, 4]])
 
-def test_feed_forward_does_not_fail_with_valid_parameters():
+    diff = relu_vec_differential(activations)
+
+    diff.should.have.length_of(2)
+    diff[0][0].should.equal(0)
+    diff[0][1].should.equal(0)
+    diff[0][2].should.equal(1)
+    diff[0][3].should.equal(1)
+    diff[1][0].should.equal(1)
+    diff[1][1].should.equal(1)
+    diff[1][2].should.equal(1)
+    diff[1][3].should.equal(1)
+
+def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # Five layers, with two neurons as output
     layers = [10, 15, 10, 5, 2]
 
@@ -45,11 +60,10 @@ def test_feed_forward_does_not_fail_with_valid_parameters():
         np.ones([5, 2])
     ]
 
-
     # One hundred observations, with five variables
     data = np.ones([100, 10])
 
-    result = feed_forward(data=data, weights=weights, neurons=layers,
+    result = feed_forward_vec(data=data, weights=weights, neurons=layers,
                           activation_function=relu_vec)
 
     result.should.be.a(np.ndarray)

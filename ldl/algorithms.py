@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def feed_forward(data, weights, neurons, activation_function):
+def feed_forward_vec(data, weights, neurons, activation_function):
     '''
     Performs the feed forward portion of the neural network in a vectorized
     manner.
@@ -23,13 +23,11 @@ def feed_forward(data, weights, neurons, activation_function):
     print(f'L1 weighted: {weighted_input.shape}')
     activation = None
 
-    # Loop over the weights to find activations and the next weighted input
+    # Loop over the weights to find activations and then calculate the next
+    # weighted input
     for weight in weights[1:]:
-        print(f'Weight: {weight.shape}')
-        print(f'Input: {weighted_input.shape}')
         activation = activation_function(weighted_input)
         weighted_input = np.matmul(activation, weight)
-        print(f'Activation: {activation.shape}')
 
     # Calculate the final activation
     return activation_function(weighted_input)
@@ -49,3 +47,16 @@ def relu_vec(weighted_input):
     # Change all negative values to 0. Here we use a trick where logical are
     # coerced to 0 or 1
     return weighted_input * (weighted_input > 0)
+
+
+def relu_vec_differential(activations):
+    '''
+    Vectorized differential of the rectified linear unit activation function.
+    Differentiates the entire layer for all observations.
+    Simply returns 1 for values > 0 and 0 for values <= 0
+
+    :param activations: 2D numpy.array of layer activations for the layer
+    '''
+
+    # Set default to ones, then set everything <= 0 to 0
+    return np.ones(activations.shape) * activations > 0
