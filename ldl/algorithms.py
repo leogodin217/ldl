@@ -84,6 +84,9 @@ def quadradic_cost_vec(y, y_predicted):
     cost = 1/2M SUM(LENGTH(y - y_predicted)^2)
     cost = 1/2M SUM(LENGTH(y(x) - AL)^2)
 
+    This formula is great, because it is easy to calculate and its derivative
+    is simply
+
     :param y: 2D numpy.array with the expected values for all observations.
     :param y_hat: 2D numpy.array of same shape as y, with predicted values for
                   all observations.
@@ -91,18 +94,30 @@ def quadradic_cost_vec(y, y_predicted):
     :returns A decimal representing the average error for all observations.
     '''
     # Subtract predicted from expected
-    diff = y - y_predicted
+    diff = y_predicted - y
     # Square the differences
     squares = np.power(diff, 2)
-    print(f'Squares: {squares}')
     # Get the sum of squared errors for each observation
     sum_of_squares = np.sum(squares, axis=1)
-    print(f'Sum of Squares: {sum_of_squares}')
     # To carry out the formula, LENGTH(y - y_predicted) includes finding the
     # square root of the squared differences. Then, the cost function takes
     # the square. This means we can skip both steps since squaring a square
     # root returns the original value.
     # Calculate final average cost, considering we should divde each square
     cost = np.mean(sum_of_squares / 2)
-    print(f'Cost: {cost}')
     return cost
+
+
+def quadradic_cost_derivative_vec(y, y_predicted):
+    '''
+    Calculates to partial derivative of the cost function with respect to
+    ??? Need to clarify
+
+    :param y: 2D numpy.array with the expected values of all observations.
+    :param y_predicted: 2D numpy.array of same shape as y, with predicted
+                        values for all observations.
+    '''
+
+    # This is simple, since the derivative is simply the difference between
+    # predicted and actual
+    return y_predicted - y

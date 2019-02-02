@@ -5,6 +5,7 @@ from ldl.algorithms import relu_vec
 from ldl.algorithms import feed_forward_vec
 from ldl.algorithms import relu_vec_differential
 from ldl.algorithms import quadradic_cost_vec
+from ldl.algorithms import quadradic_cost_derivative_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -80,3 +81,18 @@ def test_quadradic_cost_vec_returns_correct_value():
 
     result = quadradic_cost_vec(y, y_predicted)
     result.should.equal(1.0)
+
+
+def test_quadradic_cost_derivative_returns_correct_values():
+    y_predicted = np.array([[1, 0, .5, 0], [0, 0, 0, 0]])
+    y = np.array([[0, 0, 0, 0], [1, 2, 3, 4]])
+    derivative = quadradic_cost_derivative_vec(y, y_predicted)
+    derivative.should.have.length_of(2)
+    derivative[0][0].should.equal(1)
+    derivative[0][1].should.equal(0)
+    derivative[0][2].should.equal(.5)
+    derivative[0][3].should.equal(0)
+    derivative[1][0].should.equal(-1)
+    derivative[1][1].should.equal(-2)
+    derivative[1][2].should.equal(-3)
+    derivative[1][3].should.equal(-4)
