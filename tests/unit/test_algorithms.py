@@ -4,6 +4,7 @@ import numpy as np
 from ldl.algorithms import relu_vec
 from ldl.algorithms import feed_forward_vec
 from ldl.algorithms import relu_vec_differential
+from ldl.algorithms import quadradic_cost_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -54,10 +55,10 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # Example weights for a five-layer network
     # Each set of weights has dimension L X L+1
     weights = [
-        np.ones([10, 15]),
-        np.ones([15, 10]),
-        np.ones([10, 5]),
-        np.ones([5, 2])
+        np.ones([11, 15]),
+        np.ones([16, 10]),
+        np.ones([11, 5]),
+        np.ones([6, 2])
     ]
 
     # One hundred observations, with five variables
@@ -69,3 +70,13 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     result.should.be.a(np.ndarray)
     result.should.have.length_of(100)
     result[0].should.have.length_of(2)
+
+
+def test_quadradic_cost_vec_returns_correct_value():
+    y = np.array([[0, 0, 0, 0], [0, 2, 0, 0]])
+    # Should result in 2 and 0, repsectively for cost, which would result
+    # in .25 for average cost.
+    y_predicted = np.array([[1, 1, -1, -1], [0, 2, 0, 0]])
+
+    result = quadradic_cost_vec(y, y_predicted)
+    result.should.equal(1.0)
