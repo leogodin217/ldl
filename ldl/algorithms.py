@@ -150,3 +150,22 @@ def output_error_vec(y, y_predicted, cost_derivative_function,
     # Component-wise product
     error = cost_derivative * activation_derivative
     return error
+
+
+def layer_error_vec(weights, errors, derivatives):
+    '''
+    Vectorized calculation of error for a single layer.
+    :param weights: 2D numpy.array representing the input weights for l+1.
+    :param errors: 2D numpy.array representing the errors for l+1. One row for
+                   each observation.
+    :param derivatives: numpy.array representing the derivatives of the current
+                        layer. One row for each observation.
+    '''
+
+    # This determines te amount that the derivative impacts future layers
+    weighted_error = np.matmul(errors, weights)
+    # Component-wise multiplication simply sets the error with respect to
+    # future layers
+    layer_error = weighted_error * derivatives
+    print(layer_error)
+    return layer_error

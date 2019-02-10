@@ -7,6 +7,7 @@ from ldl.algorithms import relu_differential_vec
 from ldl.algorithms import quadradic_cost_vec
 from ldl.algorithms import quadradic_cost_derivative_vec
 from ldl.algorithms import output_error_vec
+from ldl.algorithms import layer_error_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -123,3 +124,27 @@ def test_output_activation_vec_works_with_valid_parameters():
     errors[1][1].should.equal(0)
     errors[1][2].should.equal(0)
     errors[1][3].should.equal(0)
+
+
+def test_layer_error_vec_works_with_valid_parameters():
+    # 3 neurons in l going into 2 neurons in l+1
+    weights = np.array([[1, 1, 1], [1, 1, 1]])
+    # 5 observations of 3 neurons in l+1
+    errors = np.array([[1, 1], [0, 0], [1, 1], [1, 1], [1, 1]])
+    # 5 observations of 3 neurons in l
+    derivatives = np.array(
+        [[1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [0, 0, 0]])
+
+    errors = layer_error_vec(weights, errors, derivatives)
+    errors.should.be.a(np.ndarray)
+    errors.should.have.length_of(5)
+    errors[0].should.have.length_of(3)
+    errors[0][0].should.equal(2)
+    errors[0][1].should.equal(2)
+    errors[0][2].should.equal(2)
+    errors[1][0].should.equal(0)
+    errors[1][1].should.equal(0)
+    errors[1][2].should.equal(0)
+    errors[4][0].should.equal(0)
+    errors[4][1].should.equal(0)
+    errors[4][2].should.equal(0)
