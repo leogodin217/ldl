@@ -3,9 +3,10 @@ import pytest
 import numpy as np
 from ldl.algorithms import relu_vec
 from ldl.algorithms import feed_forward_vec
-from ldl.algorithms import relu_vec_differential
+from ldl.algorithms import relu_differential_vec
 from ldl.algorithms import quadradic_cost_vec
 from ldl.algorithms import quadradic_cost_derivative_vec
+from ldl.algorithms import output_error_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -34,10 +35,10 @@ def test_relu_vec_handles_various_sizes():
     result.should.have.length_of(100)
     result[0].should.have.length_of(4)
 
-def relu_vec_differential_calculates_correct_values():
+def relu_differential_vec_calculates_correct_values():
     activations = numpy.array([[-1, 0, 1, 2], [0.01, 2.5, 3, 4]])
 
-    diff = relu_vec_differential(activations)
+    diff = relu_differential_vec(activations)
 
     diff.should.have.length_of(2)
     diff[0][0].should.equal(0)
@@ -84,15 +85,41 @@ def test_quadradic_cost_vec_returns_correct_value():
 
 
 def test_quadradic_cost_derivative_returns_correct_values():
-    y_predicted = np.array([[1, 0, .5, 0], [0, 0, 0, 0]])
     y = np.array([[0, 0, 0, 0], [1, 2, 3, 4]])
+    y_predicted = np.array([[1, 0, .5, 0], [0, 0, 0, 0]])
+
     derivative = quadradic_cost_derivative_vec(y, y_predicted)
+
     derivative.should.have.length_of(2)
-    derivative[0][0].should.equal(1)
+    derivative[0][0].should.equal(-1)
     derivative[0][1].should.equal(0)
-    derivative[0][2].should.equal(.5)
+    derivative[0][2].should.equal(-.5)
     derivative[0][3].should.equal(0)
-    derivative[1][0].should.equal(-1)
-    derivative[1][1].should.equal(-2)
-    derivative[1][2].should.equal(-3)
-    derivative[1][3].should.equal(-4)
+    derivative[1][0].should.equal(1)
+    derivative[1][1].should.equal(2)
+    derivative[1][2].should.equal(3)
+    derivative[1][3].should.equal(4)
+
+
+def test_output_activation_vec_works_with_valid_parameters():
+    # two observations for four output neurons
+    y = np.array([[1, 1, 1, 1], [2, 2, 2, 2]])
+    y_predicted = np.array([[0, 1, 1, 1], [0, 2, 2, 2]])
+    weighted_input = np.array([[1, 1, 1, 1], [1, 1, 1, 1]])
+    cost_derivative_function = quadradic_cost_derivative_vec
+    activation_derivative_function = relu_differential_vec
+
+    errors = output_error_vec(y, y_predicted, cost_derivative_function,
+                              activation_derivative_function, weighted_input)
+
+    errors.should.be.a(np.ndarray)
+    errors.should.have.length_of(2)
+    errors[0].should.have.length_of(4)
+    errors[0][0].should.equal(1)
+    errors[1][0].should.equal(2)
+    errors[0][1].should.equal(0)
+    errors[0][2].should.equal(0)
+    errors[0][3].should.equal(0)
+    errors[1][1].should.equal(0)
+    errors[1][2].should.equal(0)
+    errors[1][3].should.equal(0)

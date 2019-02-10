@@ -57,7 +57,7 @@ def relu_vec(weighted_input):
     return weighted_input * (weighted_input > 0)
 
 
-def relu_vec_differential(activations):
+def relu_differential_vec(weighted_input):
     '''
     Vectorized differential of the rectified linear unit activation function.
     Differentiates the entire layer for all observations.
@@ -69,7 +69,7 @@ def relu_vec_differential(activations):
     '''
 
     # Set default to ones, then set everything <= 0 to 0
-    return np.ones(activations.shape) * activations > 0
+    return np.ones(weighted_input.shape) * weighted_input > 0
 
 
 def quadradic_cost_vec(y, y_predicted):
@@ -94,7 +94,7 @@ def quadradic_cost_vec(y, y_predicted):
     :returns A decimal representing the average error for all observations.
     '''
     # Subtract predicted from expected
-    diff = y_predicted - y
+    diff = y - y_predicted
     # Square the differences
     squares = np.power(diff, 2)
     # Get the sum of squared errors for each observation
@@ -111,7 +111,7 @@ def quadradic_cost_vec(y, y_predicted):
 def quadradic_cost_derivative_vec(y, y_predicted):
     '''
     Calculates to partial derivative of the cost function with respect to
-    ??? Need to clarify
+    ??? Need to clarify. Is it with respect to X?
 
     :param y: 2D numpy.array with the expected values of all observations.
     :param y_predicted: 2D numpy.array of same shape as y, with predicted
@@ -120,4 +120,33 @@ def quadradic_cost_derivative_vec(y, y_predicted):
 
     # This is simple, since the derivative is simply the difference between
     # predicted and actual
-    return y_predicted - y
+    return y - y_predicted
+
+
+def output_error_vec(y, y_predicted, cost_derivative_function,
+                     activation_derivative_function, weighted_input):
+    '''
+    Vectorized calculation of the error of the output layer depending on the
+    derivatives of the cost function and the activation functions.
+
+    :param y: Expected values of the output layer
+    :param y_predicted: Actual values of the output layer
+    :param cost_derivative_function: Function that calculates the derivative
+                                     of the cost function depending on the
+                                     activations of the output layer.
+    :param activation_derivative_function: Function that calculates the
+                                           derivative of the activation
+                                           of the output layer.
+    :param weigted_input: A 2D numpy.array with the weighted input to the
+                          output layer. Holds one row per observation and one
+                          column per output neuron.
+
+    :returns A 1D numpy.array holding the error of each neuron in the output
+             layer.
+    '''
+
+    cost_derivative = cost_derivative_function(y, y_predicted)
+    activation_derivative = activation_derivative_function(weighted_input)
+    # Component-wise product
+    error = cost_derivative * activation_derivative
+    return error
