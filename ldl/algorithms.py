@@ -44,6 +44,7 @@ def feed_forward_vec(data, weights, biases, activation_function,
         # Since we already have weighted input, we just need to calculate
         # activation.
         activation = activation_function(weighted_input)
+        print(activation)
         activations.append(activation)
         derivative = derivative_function(weighted_input)
         derivatives.append(derivative)
@@ -72,7 +73,8 @@ def relu_vec(weighted_input):
 
     # Change all negative values to 0. Here we use a trick where logical are
     # coerced to 0 or 1
-    return weighted_input * (weighted_input > 0)
+    output = np.ones(weighted_input.shape)
+    return output * (weighted_input > 0)
 
 
 def relu_derivative_vec(weighted_input):

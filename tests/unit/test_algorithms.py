@@ -25,10 +25,10 @@ def test_relu_vec_returns_correct_calculations():
     activations.should.have.length_of(3)
     activations[0][0].should.equal(0)
     activations[0][1].should.equal(1)
-    activations[1][0].should.equal(2)
+    activations[1][0].should.equal(1)
     activations[1][1].should.equal(0)
-    activations[2][0].should.equal(5)
-    activations[2][1].should.equal(5)
+    activations[2][0].should.equal(1)
+    activations[2][1].should.equal(1)
 
 
 def test_relu_vec_handles_various_sizes():
