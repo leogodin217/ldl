@@ -73,8 +73,7 @@ def relu_vec(weighted_input):
 
     # Change all negative values to 0. Here we use a trick where logical are
     # coerced to 0 or 1
-    output = np.ones(weighted_input.shape)
-    return output * (weighted_input > 0)
+    return weighted_input * (weighted_input > 0)
 
 
 def relu_derivative_vec(weighted_input):
