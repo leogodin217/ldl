@@ -44,7 +44,6 @@ def feed_forward_vec(data, weights, biases, activation_function,
         # Since we already have weighted input, we just need to calculate
         # activation.
         activation = activation_function(weighted_input)
-        print(activation)
         activations.append(activation)
         derivative = derivative_function(weighted_input)
         derivatives.append(derivative)
