@@ -15,7 +15,7 @@ def feed_forward_vec(data, weights, biases, neurons, activation_function,
     param: data: 2D numpy.array with one row per observation and one column per
                  feature
     :param weights: List of 2D numpy.arrays with the weights for each neuron.
-                    Each item should have dimension l X l+1.
+                    Each item should have dimension l+1 X l.
     :param biases: List of 2D numpy.arrays with the biases for each neuron.
     :param neurons: List of 1D numpy.arrays with the number of neurons for each
                     layer.
@@ -30,7 +30,7 @@ def feed_forward_vec(data, weights, biases, neurons, activation_function,
     '''
 
     # Cacculate the weighted input from layer to layer 2
-    weighted_input = np.matmul(data, weights[0]) + biases[0]
+    weighted_input = np.matmul(data, weights[0].transpose()) + biases[0]
     activation = None
 
     # Store activations for each layer, so they can be used in backpropagation
@@ -50,8 +50,7 @@ def feed_forward_vec(data, weights, biases, neurons, activation_function,
         derivative = derivative_function(weighted_input)
         derivatives.append(derivative)
 
-        ################# Need to enumerate, sow e can index biases as well
-        weighted_input = np.matmul(activation, weight) + biases[index + 1]
+        weighted_input = np.matmul(activation, weight.transpose()) + biases[index + 1]
 
     # Calculate the final activation
     output_activation = activation_function(weighted_input)
@@ -269,3 +268,47 @@ def get_weight_partial_derivatives_vec(activations, errors):
         observations = error.shape[0]
         delta_weights.append(layer_delta_weights / observations)
     return delta_weights
+
+
+def get_updated_biases_vec(biases, delta_biases, learning_rate):
+    '''
+    Updates the biases for a network after gradient descent has calculated the
+    partial derivatives of each bias.
+    new_bias = bias - learning rate * delta_bias
+
+   :param biases: A list of 1D numpy.arrays representing the current biases
+    :param delta_biases: A list of 1D numpy.arrays representing the partial
+                         derivatives of the biases after gradient descent.
+    :param learning_rate: A numeric value to multiply the change by.
+
+    :returns A list of 1D numpy.arrays representing the new biases
+    '''
+
+    new_bias = []
+    # Loop through the layers
+    for index, bias in enumerate(biases):
+        # Update the bias
+        new_bias.append(bias - (delta_biases[index] * learning_rate))
+    return new_bias
+
+
+def get_updated_weights_vec(weights, delta_weights, learning_rate):
+    '''
+    Updates the weights for a network after gradient descent has calculated the
+    partial derivatives of each weight.
+    new_weight = weight - learning rate * delta_weight
+
+    :param weights: A list of 2D numpy.arrays representing the current weights
+    :param delta_biases: A list of 2D numpy.arrays representing the partial
+                         derivatives of the weights after gradient descent.
+    :param learning_rate: A numeric value to multiply the change by.
+
+    :returns A list of 2D numpy.arrays representing the new weights
+    '''
+
+    new_weights = []
+    # Loop through the layers
+    for index, weight in enumerate(weights):
+        # Update the weight
+        new_weights.append(weight - (delta_weights[index] * learning_rate))
+    return new_weights

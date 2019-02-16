@@ -11,6 +11,8 @@ from ldl.algorithms import layer_error_vec
 from ldl.algorithms import backpropagate_errors
 from ldl.algorithms import get_bias_partial_derivatives_vec
 from ldl.algorithms import get_weight_partial_derivatives_vec
+from ldl.algorithms import get_updated_biases_vec
+from ldl.algorithms import get_updated_weights_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -62,10 +64,10 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # Example weights for a five-layer network
     # Each set of weights has dimension L X L+1
     weights = [
-        np.ones([10, 15]),
         np.ones([15, 10]),
-        np.ones([10, 5]),
-        np.ones([5, 2])
+        np.ones([10, 15]),
+        np.ones([5, 10]),
+        np.ones([2, 5])
     ]
 
     biases = [
@@ -257,3 +259,62 @@ def test_get_weight_partial_derivatives_works_with_valid_input():
     delta_weights[1][0][0].should.equal(1)
     delta_weights[2].shape.should.equal((2, 3))
     delta_weights[2][0][0].should.equal(1)
+
+
+def test_get_updated_biases_vec_works_with_valid_input():
+    # 10 x 5 x 3 x 2 network
+    learning_rate = 0.1
+    # Biases for l+1 - L
+    biases = [
+        np.ones(5),
+        np.ones(3),
+        np.ones(2)
+    ]
+    delta_biases = [
+        np.ones(5),
+        np.ones(3),
+        np.ones(2)
+    ]
+
+    updated_biases = get_updated_biases_vec(biases, delta_biases,
+                                            learning_rate)
+
+    updated_biases.should.be.a(list)
+    updated_biases[0].should.be.a(np.ndarray)
+    updated_biases[0].should.have.length_of(5)
+    updated_biases[0][0].should.equal(0.9)
+    updated_biases[1].should.have.length_of(3)
+    updated_biases[1][0].should.equal(0.9)
+    updated_biases[2].should.have.length_of(2)
+    updated_biases[2][0].should.equal(0.9)
+
+
+def test_get_updated_weights_vec_works_with_valid_input():
+    # 10 x 5 x 3 x 2 network
+    learning_rate = 0.1
+    # Weights for l - L - 1
+    weights = [
+        np.ones([5, 10]),
+        np.ones([3, 5]),
+        np.ones([2, 3]),
+    ]
+    delta_weights = [
+        np.ones([5, 10]),
+        np.ones([3, 5]),
+        np.ones([2, 3]),
+    ]
+
+    updated_weights = get_updated_weights_vec(weights, delta_weights,
+                                              learning_rate)
+
+    updated_weights.should.be.a(list)
+    updated_weights.should.have.length_of(3)
+    updated_weights[0].should.be.a(np.ndarray)
+    updated_weights[0].shape.should.equal((5, 10))
+    updated_weights[0][0][0].should.equal(0.9)
+    updated_weights[1].should.be.a(np.ndarray)
+    updated_weights[1].shape.should.equal((3, 5))
+    updated_weights[1][0][0].should.equal(0.9)
+    updated_weights[2].should.be.a(np.ndarray)
+    updated_weights[2].shape.should.equal((2, 3))
+    updated_weights[2][0][0].should.equal(0.9)
