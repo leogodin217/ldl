@@ -1,7 +1,12 @@
 import numpy as np
 
+''' TODO: Ensure all functions use l x l-1 format One row per output neuron
+          one column per input neuron
+'''
 
-def feed_forward_vec(data, weights, neurons, activation_function):
+
+def feed_forward_vec(data, weights, biases, neurons, activation_function,
+                     derivative_function):
     '''
     Performs the feed forward portion of the neural network in a vectorized
     manner.
@@ -10,35 +15,51 @@ def feed_forward_vec(data, weights, neurons, activation_function):
     param: data: 2D numpy.array with one row per observation and one column per
                  feature
     :param weights: List of 2D numpy.arrays with the weights for each neuron.
-                    Each item should have dimension L+1 X L+2. This is so we
-                    can add the bias neurons.
+                    Each item should have dimension l X l+1.
+    :param biases: List of 2D numpy.arrays with the biases for each neuron.
     :param neurons: List of 1D numpy.arrays with the number of neurons for each
                     layer.
     :param activation_function: A function reference for the vectorized
                                 activation function. It must handle all
                                 obserations in a single call.
+    :param derivative_function: A function reference for the vectorized
+                                derivative function. This is needed so we can
+                                calculate the derivative for later use in
+                                back propagation.
 
     '''
 
-    # Add the bias neuron to the input data
-    bias_data = np.append(data, np.ones([len(data), 1]), axis=1)
     # Cacculate the weighted input from layer to layer 2
-    weighted_input = np.matmul(bias_data, weights[0])
+    weighted_input = np.matmul(data, weights[0]) + biases[0]
     activation = None
 
+    # Store activations for each layer, so they can be used in backpropagation
+    activations = []
+    # Input layer is added as-is
+    activations.append(data)
+    # Store the derivatives for each layer except the input layer so they
+    # can be used in backpropagation
+    derivatives = []
     # Loop over the weights to find activations and then calculate the next
     # weighted input
-    for weight in weights[1:]:
+    for index, weight in enumerate(weights[1:]):
         # Since we already have weighted input, we just need to calculate
         # activation.
         activation = activation_function(weighted_input)
-        # Add the bias to the activation (Add a bias neuron)
-        activation_bias = np.append(activation, np.ones([len(activation), 1]),
-                                    axis=1)
-        weighted_input = np.matmul(activation_bias, weight)
+        activations.append(activation)
+        derivative = derivative_function(weighted_input)
+        derivatives.append(derivative)
+
+        ################# Need to enumerate, sow e can index biases as well
+        weighted_input = np.matmul(activation, weight) + biases[index + 1]
 
     # Calculate the final activation
-    return activation_function(weighted_input)
+    output_activation = activation_function(weighted_input)
+    activations.append(output_activation)
+    output_derivative = derivative_function(weighted_input)
+    derivatives.append(output_derivative)
+
+    return {'activations': activations, 'derivatives': derivatives}
 
 
 def relu_vec(weighted_input):
@@ -57,7 +78,7 @@ def relu_vec(weighted_input):
     return weighted_input * (weighted_input > 0)
 
 
-def relu_differential_vec(weighted_input):
+def relu_derivative_vec(weighted_input):
     '''
     Vectorized differential of the rectified linear unit activation function.
     Differentiates the entire layer for all observations.
@@ -141,8 +162,9 @@ def output_error_vec(y, y_predicted, cost_derivative_function,
                           output layer. Holds one row per observation and one
                           column per output neuron.
 
-    :returns A 1D numpy.array holding the error of each neuron in the output
-             layer.
+    :returns A 2D numpy.array holding the error of each neuron in the output
+             layer. One row for each observation, one column per neuron in the
+             output layer.
     '''
 
     cost_derivative = cost_derivative_function(y, y_predicted)
@@ -160,6 +182,9 @@ def layer_error_vec(weights, errors, derivatives):
                    each observation.
     :param derivatives: numpy.array representing the derivatives of the current
                         layer. One row for each observation.
+    :returns A 2D numpy.array representing the errors for each neuron in a
+             single layer. One row per observation and one column for each
+             neuron.
     '''
 
     # This determines te amount that the derivative impacts future layers
@@ -167,5 +192,80 @@ def layer_error_vec(weights, errors, derivatives):
     # Component-wise multiplication simply sets the error with respect to
     # future layers
     layer_error = weighted_error * derivatives
-    print(layer_error)
     return layer_error
+
+
+def backpropagate_errors(weights, derivatives, output_errors):
+    '''
+    Backpropagates errors through all the layers, except the input layer.
+
+    :param weights: A list of 2D numpy arrays representing the weights for
+                    each layer.
+    :param derivatives: A list of 2D numpy.arrays representing the derivatives
+                        fore each layer except the input layer. Each array
+                        contains one row per observation and one column per
+                        neuron in the layer.
+    :param output_errors: A 2D numpy.array representing the errors fo the
+                          output error. One row per observation and one column
+                          for each output neuron.
+    :returns A list of 2D numpy.arrays representing the errors for each layer
+             except the input layer. Each array contains one row per
+             observation and one column for each neuron in the layer.
+    '''
+
+    # Since backpropagation start from the end, we will reverse the lists
+    weights_back = weights[::-1]  # Simple form of reversing a list
+    derivatives_back = derivatives[::-1]
+
+    errors = []
+    # We already have the errors for the output layer
+    errors.insert(0, output_errors)
+
+    # Loop through layers L-1 through layer 2 and get the errors
+    for index, weight in enumerate(weights_back):
+        layer_error = layer_error_vec(weight, errors[0],
+                                      derivatives=derivatives_back[index])
+        errors.insert(0, layer_error)
+    return errors
+
+
+def get_bias_partial_derivatives_vec(errors):
+    '''
+    Calculates the partial derivatives for each neuron bias. This is equal to
+    the mean error of each neuron.
+
+    :param errors: A list of 2D numpy.arrays with the errors for each layer.
+
+    :returns A list of 2D numpy.arrays with the partial derivatives of
+             all biases.
+    '''
+    delta_bias = []
+    for layer in errors:
+        delta_bias.append(np.mean(layer, axis=0))
+    return delta_bias
+
+
+def get_weight_partial_derivatives_vec(activations, errors):
+    '''
+    Calculates the partial derivatives for each weight. This is equal to the
+    activation of input times the error of the output.
+
+    :param activations: A list of 2D numpy.arrays representing the activations
+                        for all observations, including the input layer.
+    :param errors: A list of 2D numpy.arrays with errors for each layer.
+
+    :returns A list of 2D numpy.arrays with the partial derivatives of each
+             weight.
+    '''
+
+    # 20 x 5
+    # 20 3
+    delta_weights = []
+
+    for index, error in enumerate(errors):
+        # Calculate the sum of partial derivatives for all observations
+        layer_delta_weights = np.matmul(error.transpose(), activations[index])
+        # Calculate the mean partial derivative
+        observations = error.shape[0]
+        delta_weights.append(layer_delta_weights / observations)
+    return delta_weights

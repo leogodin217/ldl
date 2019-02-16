@@ -3,11 +3,14 @@ import pytest
 import numpy as np
 from ldl.algorithms import relu_vec
 from ldl.algorithms import feed_forward_vec
-from ldl.algorithms import relu_differential_vec
+from ldl.algorithms import relu_derivative_vec
 from ldl.algorithms import quadradic_cost_vec
 from ldl.algorithms import quadradic_cost_derivative_vec
 from ldl.algorithms import output_error_vec
 from ldl.algorithms import layer_error_vec
+from ldl.algorithms import backpropagate_errors
+from ldl.algorithms import get_bias_partial_derivatives_vec
+from ldl.algorithms import get_weight_partial_derivatives_vec
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -36,10 +39,10 @@ def test_relu_vec_handles_various_sizes():
     result.should.have.length_of(100)
     result[0].should.have.length_of(4)
 
-def relu_differential_vec_calculates_correct_values():
+def relu_derivative_vec_calculates_correct_values():
     activations = numpy.array([[-1, 0, 1, 2], [0.01, 2.5, 3, 4]])
 
-    diff = relu_differential_vec(activations)
+    diff = relu_derivative_vec(activations)
 
     diff.should.have.length_of(2)
     diff[0][0].should.equal(0)
@@ -51,6 +54,7 @@ def relu_differential_vec_calculates_correct_values():
     diff[1][2].should.equal(1)
     diff[1][3].should.equal(1)
 
+
 def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # Five layers, with two neurons as output
     layers = [10, 15, 10, 5, 2]
@@ -58,21 +62,50 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # Example weights for a five-layer network
     # Each set of weights has dimension L X L+1
     weights = [
-        np.ones([11, 15]),
-        np.ones([16, 10]),
-        np.ones([11, 5]),
-        np.ones([6, 2])
+        np.ones([10, 15]),
+        np.ones([15, 10]),
+        np.ones([10, 5]),
+        np.ones([5, 2])
+    ]
+
+    biases = [
+        np.ones([15]),
+        np.ones([10]),
+        np.ones([5]),
+        np.ones([2])
     ]
 
     # One hundred observations, with five variables
     data = np.ones([100, 10])
 
-    result = feed_forward_vec(data=data, weights=weights, neurons=layers,
-                          activation_function=relu_vec)
+    result = feed_forward_vec(data, weights, biases, layers,
+                              activation_function=relu_vec,
+                              derivative_function=relu_derivative_vec)
 
-    result.should.be.a(np.ndarray)
-    result.should.have.length_of(100)
-    result[0].should.have.length_of(2)
+    result.should.be.a(dict)
+    result['activations'].should.be.a(list)
+    result['activations'].should.have.length_of(5)
+    result['activations'][0].should.have.length_of(100)
+    result['activations'][0][0].should.have.length_of(10)
+    result['activations'][1].should.have.length_of(100)
+    result['activations'][1][0].should.have.length_of(15)
+    result['activations'][2].should.have.length_of(100)
+    result['activations'][2][0].should.have.length_of(10)
+    result['activations'][3].should.have.length_of(100)
+    result['activations'][3][0].should.have.length_of(5)
+    result['activations'][4].should.have.length_of(100)
+    result['activations'][4][0].should.have.length_of(2)
+    result['derivatives'].should.be.a(list)
+    # No derivative for the first layer
+    result['derivatives'].should.have.length_of(4)
+    result['derivatives'][0].should.have.length_of(100)
+    result['derivatives'][0][0].should.have.length_of(15)
+    result['derivatives'][1].should.have.length_of(100)
+    result['derivatives'][1][0].should.have.length_of(10)
+    result['derivatives'][2].should.have.length_of(100)
+    result['derivatives'][2][0].should.have.length_of(5)
+    result['derivatives'][3].should.have.length_of(100)
+    result['derivatives'][3][0].should.have.length_of(2)
 
 
 def test_quadradic_cost_vec_returns_correct_value():
@@ -108,7 +141,7 @@ def test_output_activation_vec_works_with_valid_parameters():
     y_predicted = np.array([[0, 1, 1, 1], [0, 2, 2, 2]])
     weighted_input = np.array([[1, 1, 1, 1], [1, 1, 1, 1]])
     cost_derivative_function = quadradic_cost_derivative_vec
-    activation_derivative_function = relu_differential_vec
+    activation_derivative_function = relu_derivative_vec
 
     errors = output_error_vec(y, y_predicted, cost_derivative_function,
                               activation_derivative_function, weighted_input)
@@ -148,3 +181,79 @@ def test_layer_error_vec_works_with_valid_parameters():
     errors[4][0].should.equal(0)
     errors[4][1].should.equal(0)
     errors[4][2].should.equal(0)
+
+
+def test_backpropagate_errors_works_with_valid_parameters():
+    # 10 x 5 x 3 x 2 network. We already have error for output and we don't
+    # need error for input layer
+    weights = [
+        np.ones([3, 5]),
+        np.ones([2, 3]),
+    ]
+
+    derivatives = [
+        np.ones([20, 5]),
+        np.ones([20, 3]),
+    ]
+
+    output_errors = np.ones([20, 2])
+
+    errors = backpropagate_errors(weights, derivatives, output_errors)
+
+    errors.should.be.a(list)
+    errors.should.have.length_of(3)
+    errors[0].should.be.a(np.ndarray)
+    errors[0].shape.should.equal((20, 5))
+    errors[1].shape.should.equal((20, 3))
+    errors[2].shape.should.equal((20, 2))
+
+
+def test_get_bias_partial_derivatives_returns_mean_of_the_error():
+    # 10 x 5 x 3 x 2 network. The bias is calculated on all but the
+    # input layer.
+    errors = [
+        np.ones([20, 5]),
+        np.ones([20, 3]),
+        np.ones([20, 2])
+    ]
+
+    bias_partial_derivatives = get_bias_partial_derivatives_vec(errors)
+
+    bias_partial_derivatives.should.have.length_of(3)
+    bias_partial_derivatives[0].should.be.a(np.ndarray)
+    bias_partial_derivatives[0].shape.should.equal((5, ))
+    bias_partial_derivatives[0][0].should.equal(1)
+    bias_partial_derivatives[0][1].should.equal(1)
+    bias_partial_derivatives[0][2].should.equal(1)
+    bias_partial_derivatives[0][3].should.equal(1)
+    bias_partial_derivatives[0][4].should.equal(1)
+    bias_partial_derivatives[1].shape.should.equal((3, ))
+    bias_partial_derivatives[2].shape.should.equal((2, ))
+
+
+def test_get_weight_partial_derivatives_works_with_valid_input():
+    # 10 x 5 x 3 x 2 network.
+
+    # Errors for l2 - L
+    errors = [
+        np.ones([20, 5]),
+        np.ones([20, 3]),
+        np.ones([20, 2])
+    ]
+    # activations for l1 - L-1
+    activations = [
+        np.ones([20, 10]),
+        np.ones([20, 5]),
+        np.ones([20, 3]),
+    ]
+
+    delta_weights = get_weight_partial_derivatives_vec(activations, errors)
+
+    delta_weights.should.be.a(list)
+    delta_weights[0].should.be.a(np.ndarray)
+    delta_weights[0].shape.should.equal((5, 10))
+    delta_weights[0][0][0].should.equal(1)
+    delta_weights[1].shape.should.equal((3, 5))
+    delta_weights[1][0][0].should.equal(1)
+    delta_weights[2].shape.should.equal((2, 3))
+    delta_weights[2][0][0].should.equal(1)
