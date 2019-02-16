@@ -42,11 +42,12 @@ def test_relu_vec_handles_various_sizes():
     result[0].should.have.length_of(4)
 
 def relu_derivative_vec_calculates_correct_values():
-    activations = numpy.array([[-1, 0, 1, 2], [0.01, 2.5, 3, 4]])
+    activations = numpy.array([[-1.5, 0, 1.2, 2], [0.01, 2.5, 3, 4]])
 
     diff = relu_derivative_vec(activations)
 
     diff.should.have.length_of(2)
+    diff[0][0].should.be.a(double)
     diff[0][0].should.equal(0)
     diff[0][1].should.equal(0)
     diff[0][2].should.equal(1)
@@ -58,9 +59,7 @@ def relu_derivative_vec_calculates_correct_values():
 
 
 def test_feed_forward_vec_does_not_fail_with_valid_parameters():
-    # Five layers, with two neurons as output
-    layers = [10, 15, 10, 5, 2]
-
+    # 10 x 15 x 10 x 5 x 2 network
     # Example weights for a five-layer network
     # Each set of weights has dimension L X L+1
     weights = [
@@ -80,7 +79,7 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     # One hundred observations, with five variables
     data = np.ones([100, 10])
 
-    result = feed_forward_vec(data, weights, biases, layers,
+    result = feed_forward_vec(data, weights, biases,
                               activation_function=relu_vec,
                               derivative_function=relu_derivative_vec)
 

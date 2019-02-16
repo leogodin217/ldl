@@ -5,7 +5,7 @@ import numpy as np
 '''
 
 
-def feed_forward_vec(data, weights, biases, neurons, activation_function,
+def feed_forward_vec(data, weights, biases, activation_function,
                      derivative_function):
     '''
     Performs the feed forward portion of the neural network in a vectorized
@@ -17,8 +17,6 @@ def feed_forward_vec(data, weights, biases, neurons, activation_function,
     :param weights: List of 2D numpy.arrays with the weights for each neuron.
                     Each item should have dimension l+1 X l.
     :param biases: List of 2D numpy.arrays with the biases for each neuron.
-    :param neurons: List of 1D numpy.arrays with the number of neurons for each
-                    layer.
     :param activation_function: A function reference for the vectorized
                                 activation function. It must handle all
                                 obserations in a single call.
@@ -89,7 +87,7 @@ def relu_derivative_vec(weighted_input):
     '''
 
     # Set default to ones, then set everything <= 0 to 0
-    return np.ones(weighted_input.shape) * weighted_input > 0
+    return np.ones(weighted_input.shape) * (weighted_input > 0)
 
 
 def quadradic_cost_vec(y, y_predicted):
