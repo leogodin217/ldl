@@ -138,7 +138,10 @@ def quadradic_cost_derivative_vec(y, y_predicted):
 
     # This is simple, since the derivative is simply the difference between
     # predicted and actual
-    return y - y_predicted
+        # Notice that it is y_predicted - y, not y - y_predicted as it is in the
+    # cost function. In the reverse order, we would be adding to our overall
+    # cost instead of decreasing it.
+    return y_predicted - y
 
 
 def output_error_vec(y, y_predicted, cost_derivative_function,

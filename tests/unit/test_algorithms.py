@@ -126,14 +126,14 @@ def test_quadradic_cost_derivative_returns_correct_values():
     derivative = quadradic_cost_derivative_vec(y, y_predicted)
 
     derivative.should.have.length_of(2)
-    derivative[0][0].should.equal(-1)
+    derivative[0][0].should.equal(1)
     derivative[0][1].should.equal(0)
-    derivative[0][2].should.equal(-.5)
+    derivative[0][2].should.equal(.5)
     derivative[0][3].should.equal(0)
-    derivative[1][0].should.equal(1)
-    derivative[1][1].should.equal(2)
-    derivative[1][2].should.equal(3)
-    derivative[1][3].should.equal(4)
+    derivative[1][0].should.equal(-1)
+    derivative[1][1].should.equal(-2)
+    derivative[1][2].should.equal(-3)
+    derivative[1][3].should.equal(-4)
 
 
 def test_output_activation_vec_works_with_valid_parameters():
@@ -150,8 +150,8 @@ def test_output_activation_vec_works_with_valid_parameters():
     errors.should.be.a(np.ndarray)
     errors.should.have.length_of(2)
     errors[0].should.have.length_of(4)
-    errors[0][0].should.equal(1)
-    errors[1][0].should.equal(2)
+    errors[0][0].should.equal(-1)
+    errors[1][0].should.equal(-2)
     errors[0][1].should.equal(0)
     errors[0][2].should.equal(0)
     errors[0][3].should.equal(0)
