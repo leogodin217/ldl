@@ -80,8 +80,8 @@ def test_feed_forward_vec_does_not_fail_with_valid_parameters():
     data = np.ones([100, 10])
 
     result = feed_forward_vec(data, weights, biases,
-                              activation_function=relu_vec,
-                              derivative_function=relu_derivative_vec)
+                              activation_fun=relu_vec,
+                              derivative_fun=relu_derivative_vec)
 
     result.should.be.a(dict)
     result['activations'].should.be.a(list)
@@ -141,11 +141,11 @@ def test_output_activation_vec_works_with_valid_parameters():
     y = np.array([[1, 1, 1, 1], [2, 2, 2, 2]])
     y_predicted = np.array([[0, 1, 1, 1], [0, 2, 2, 2]])
     weighted_input = np.array([[1, 1, 1, 1], [1, 1, 1, 1]])
-    cost_derivative_function = quadradic_cost_derivative_vec
-    activation_derivative_function = relu_derivative_vec
+    cost_derivative_fun = quadradic_cost_derivative_vec
+    activation_derivative_fun = relu_derivative_vec
 
-    errors = output_error_vec(y, y_predicted, cost_derivative_function,
-                              activation_derivative_function, weighted_input)
+    errors = output_error_vec(y, y_predicted, cost_derivative_fun,
+                              activation_derivative_fun, weighted_input)
 
     errors.should.be.a(np.ndarray)
     errors.should.have.length_of(2)

@@ -5,8 +5,8 @@ import numpy as np
 '''
 
 
-def feed_forward_vec(data, weights, biases, activation_function,
-                     derivative_function):
+def feed_forward_vec(data, weights, biases, activation_fun,
+                     derivative_fun):
     '''
     Performs the feed forward portion of the neural network in a vectorized
     manner.
@@ -17,10 +17,10 @@ def feed_forward_vec(data, weights, biases, activation_function,
     :param weights: List of 2D numpy.arrays with the weights for each neuron.
                     Each item should have dimension l+1 X l.
     :param biases: List of 2D numpy.arrays with the biases for each neuron.
-    :param activation_function: A function reference for the vectorized
+    :param activation_fun: A function reference for the vectorized
                                 activation function. It must handle all
                                 obserations in a single call.
-    :param derivative_function: A function reference for the vectorized
+    :param derivative_fun: A function reference for the vectorized
                                 derivative function. This is needed so we can
                                 calculate the derivative for later use in
                                 back propagation.
@@ -43,17 +43,18 @@ def feed_forward_vec(data, weights, biases, activation_function,
     for index, weight in enumerate(weights[1:]):
         # Since we already have weighted input, we just need to calculate
         # activation.
-        activation = activation_function(weighted_input)
+        activation = activation_fun(weighted_input)
         activations.append(activation)
-        derivative = derivative_function(weighted_input)
+        derivative = derivative_fun(weighted_input)
         derivatives.append(derivative)
 
-        weighted_input = np.matmul(activation, weight.transpose()) + biases[index + 1]
+        weighted_input = np.matmul(activation,
+                                   weight.transpose()) + biases[index + 1]
 
     # Calculate the final activation
-    output_activation = activation_function(weighted_input)
+    output_activation = activation_fun(weighted_input)
     activations.append(output_activation)
-    output_derivative = derivative_function(weighted_input)
+    output_derivative = derivative_fun(weighted_input)
     derivatives.append(output_derivative)
 
     return {'activations': activations, 'derivatives': derivatives}
@@ -136,26 +137,24 @@ def quadradic_cost_derivative_vec(y, y_predicted):
                         values for all observations.
     '''
 
-    # This is simple, since the derivative is simply the difference between
-    # predicted and actual
-        # Notice that it is y_predicted - y, not y - y_predicted as it is in the
+    # Notice that it is y_predicted - y, not y - y_predicted as it is in the
     # cost function. In the reverse order, we would be adding to our overall
     # cost instead of decreasing it.
     return y_predicted - y
 
 
-def output_error_vec(y, y_predicted, cost_derivative_function,
-                     activation_derivative_function, weighted_input):
+def output_error_vec(y, y_predicted, cost_derivative_fun,
+                     activation_derivative_fun, weighted_input):
     '''
     Vectorized calculation of the error of the output layer depending on the
     derivatives of the cost function and the activation functions.
 
     :param y: Expected values of the output layer
     :param y_predicted: Actual values of the output layer
-    :param cost_derivative_function: Function that calculates the derivative
+    :param cost_derivative_fun: Function that calculates the derivative
                                      of the cost function depending on the
                                      activations of the output layer.
-    :param activation_derivative_function: Function that calculates the
+    :param activation_derivative_fun: Function that calculates the
                                            derivative of the activation
                                            of the output layer.
     :param weigted_input: A 2D numpy.array with the weighted input to the
@@ -167,8 +166,8 @@ def output_error_vec(y, y_predicted, cost_derivative_function,
              output layer.
     '''
 
-    cost_derivative = cost_derivative_function(y, y_predicted)
-    activation_derivative = activation_derivative_function(weighted_input)
+    cost_derivative = cost_derivative_fun(y, y_predicted)
+    activation_derivative = activation_derivative_fun(weighted_input)
     # Component-wise product
     error = cost_derivative * activation_derivative
     return error
