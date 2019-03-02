@@ -13,6 +13,8 @@ from ldl.algorithms import get_bias_partial_derivatives_vec
 from ldl.algorithms import get_weight_partial_derivatives_vec
 from ldl.algorithms import get_updated_biases_vec
 from ldl.algorithms import get_updated_weights_vec
+from ldl.algorithms import get_relu_biases
+from ldl.algorithms import get_relu_weights
 
 
 def test_relu_vec_returns_correct_calculations():
@@ -317,3 +319,34 @@ def test_get_updated_weights_vec_works_with_valid_input():
     updated_weights[2].should.be.a(np.ndarray)
     updated_weights[2].shape.should.equal((2, 3))
     updated_weights[2][0][0].should.equal(0.9)
+
+
+def test_get_relu_bias_returns_all_zeros():
+    # a 10 x 15 x 8 x 5 network
+    layers = [10, 15, 8, 5]
+
+    biases = get_relu_biases(layers)
+    biases.should.be.a(list)
+    biases.should.have.length_of(3)
+    # Should have 15 items of all zeros
+    biases[0].should.have.length_of(15)
+    np.sum(biases[0] == np.zeros(15)).should.equal(15)
+    # Should have 8 items of all zeros
+    biases[1].should.have.length_of(8)
+    np.sum(biases[1] == np.zeros(8)).should.equal(8)
+    # Should have 5 items of all zeros
+    biases[2].should.have.length_of(5)
+    np.sum(biases[2] == np.zeros(5)).should.equal(5)
+
+
+def test_get_relu_weights_returns_correct_shape():
+    # 10 x 15 x 8 x 5 network
+    layers = [10, 15, 8, 5]
+    weights = get_relu_weights(layers)
+
+    weights.should.be.a(list)
+    weights.should.have.length_of(3)
+    weights[0].should.be.a(np.ndarray)
+    weights[0].shape.should.equal((15, 10))
+    weights[1].shape.should.equal((8, 15))
+    weights[2].shape.should.equal((5, 8))

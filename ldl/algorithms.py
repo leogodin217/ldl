@@ -312,3 +312,44 @@ def get_updated_weights_vec(weights, delta_weights, learning_rate):
         # Update the weight
         new_weights.append(weight - (delta_weights[index] * learning_rate))
     return new_weights
+
+
+def get_relu_biases(layers):
+    '''
+    Calculates optimum starting bias for relu-activated networks. This is
+    simply a bunch of zeros.
+
+    :param shape: A list of ints representign the size of each layer.
+
+    :returns A list of 1D numpy.arrays representing the biases
+    '''
+    biases = []
+    for layer in layers[1:]:
+        # Layer is an int describing the number of neurons in the layer
+        biases.append(np.zeros(layer))
+    return biases
+
+
+def get_relu_weights(layers):
+    '''
+    Calculates optimized random weights for a relu-activated network using the
+    formula devised by He et al (2016) https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/He_Delving_Deep_into_ICCV_2015_paper.pdf
+    initializes weights for each layer to a normal distribution with mean=0
+    and standard deviation = sqrt(2/nl) where nl=number of input neurons to the
+    layer
+
+    :param layers: A list of ints representing the number of neurons in each
+                   layer.
+
+    :returns A list of 2D numpy.arrays
+    '''
+    weights = []
+    for i in range(len(layers) - 1):
+        mean = 0.0
+        standard_deviation = np.sqrt(2 / layers[i])
+        # Size is l out x l in
+        size = (layers[i + 1], layers[i])
+        weight = np.random.normal(loc=0.0, scale=standard_deviation,
+                                  size=(layers[i + 1], layers[i]))
+        weights.append(weight)
+    return weights
