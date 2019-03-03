@@ -102,7 +102,7 @@ class Network:
                 # Generate messages
                 train_cost_string = '{:.5f}'.format(train_cost)
                 test_cost_string = '{:.5f}'.format(test_cost)
-                val_cost_string = ':.5f}'.format(val_cost)
+                val_cost_string = '{:.5f}'.format(val_cost)
                 test_error_string = '{:.3f}'.format(test_error * 100) + '%'
                 message = f'Epoch: {epoch + 1}, '
                 message += f'\tTrain cost: {train_cost_string}, '
