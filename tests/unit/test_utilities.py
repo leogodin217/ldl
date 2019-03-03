@@ -27,6 +27,8 @@ def test_normalize_2d_array_works_with_valid_date():
     normalized[10, 0].should.equal(0)
     # Simply case where normalized in number / 10
     normalized[0, 1].should.equal(0)
-    normalized[1, 1].should.equal(0.1)
-    normalized[2, 1].should.equal(0.2)
-    normalized[10, 1].should.equal(1)
+    normalized[1, 1].should.be.within(0.099, 0.1)
+    normalized[2, 1].should.be.within(0.199, 0.2)
+    normalized[10, 1].should.be.within(0.99, 0.1)
+    # normalized[2, 1].should.equal(0.2)
+    # normalized[10, 1].should.equal(1)
