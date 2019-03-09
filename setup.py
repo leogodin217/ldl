@@ -9,5 +9,5 @@ setup(name='ldl',
       author_email='leogodin217@gmail.com',
       license='MIT',
       packages=['ldl'],
-      install_requires=['numpy',],
+      install_requires=['numpy', 'pandas'],
       zip_safe=False)
