@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ldl.network &mdash; LDL Learn Deep Learning 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> LDL Learn Deep Learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">LDL Learn Deep Learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ldl.network</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ldl.network</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Neural network structure that encapsulates the needed funality to build,</span>
+<span class="sd">train and predict.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">feed_forward_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">relu_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">relu_derivative_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">quadradic_cost_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">quadradic_cost_derivative_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">backpropagate_errors</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">get_updated_biases_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">get_updated_weights_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">get_bias_partial_derivatives_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">get_weight_partial_derivatives_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.algorithms</span> <span class="k">import</span> <span class="n">output_error_vec</span>
+<span class="kn">from</span> <span class="nn">ldl.predictions</span> <span class="k">import</span> <span class="n">predict_digit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="Network"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network">[docs]</a><span class="k">class</span> <span class="nc">Network</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Defines the network topology and manages operations. Many functions used</span>
+<span class="sd">    in the network can be overridden.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">biases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes the network and functions. Many function defaults are set</span>
+<span class="sd">        on initialization. All can be overriden with dot notation. The</span>
+<span class="sd">        following functions can be overriden:</span>
+<span class="sd">        - activation_fun</span>
+<span class="sd">        - activation_derivative_fun</span>
+<span class="sd">        - cost_fun</span>
+<span class="sd">        - cost_derivative_fun</span>
+<span class="sd">        - output_error_fun</span>
+<span class="sd">        - backpropagate_errors_fun</span>
+<span class="sd">        - updated_biases_fun</span>
+<span class="sd">        - updated_weights_fun</span>
+<span class="sd">        - bias_partial_derivatives_fun</span>
+<span class="sd">        - weight_partial_derivatives_fun</span>
+<span class="sd">        - predict_fun</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param weights: A list of 2D numpy.arrays representing the weights</span>
+<span class="sd">                            for each layer. Each entry should have dimension</span>
+<span class="sd">                            l x l-1</span>
+<span class="sd">            :param biases: A list of 1D numpy.arrays representing the biases of</span>
+<span class="sd">                           each layer.</span>
+<span class="sd">            :param name: A string representing the name of the network. Useful</span>
+<span class="sd">                         when comparing multiple network architectures.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">biases</span> <span class="o">=</span> <span class="n">biases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation_fun</span> <span class="o">=</span> <span class="n">relu_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation_derivative_fun</span> <span class="o">=</span> <span class="n">relu_derivative_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost_fun</span> <span class="o">=</span> <span class="n">quadradic_cost_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost_derivative_fun</span> <span class="o">=</span> <span class="n">quadradic_cost_derivative_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_error_fun</span> <span class="o">=</span> <span class="n">output_error_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backpropagate_errors_fun</span> <span class="o">=</span> <span class="n">backpropagate_errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_biases_fun</span> <span class="o">=</span> <span class="n">get_updated_biases_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_weights_fun</span> <span class="o">=</span> <span class="n">get_updated_weights_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias_partial_derivatives_fun</span> <span class="o">=</span> <span class="n">get_bias_partial_derivatives_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_partial_derivatives_fun</span> <span class="o">=</span> <span class="n">get_weight_partial_derivatives_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict_fun</span> <span class="o">=</span> <span class="n">predict_digit</span>
+
+<div class="viewcode-block" id="Network.get_shape"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.get_shape">[docs]</a>    <span class="k">def</span> <span class="nf">get_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Gets the shape of the network from the weights</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param weights: A list of 2D numpy arrays representing the weights</span>
+<span class="sd">                            of the network</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of ints, representing the shape of the network.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Weights always are of dimension l+ 1 x l. We can iterate the weights</span>
+        <span class="c1"># and use the number of columns as the number of neurons in the</span>
+        <span class="c1"># prefious layer.</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+            <span class="n">shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># Add the last layer, which is the number of rows in the last weights.</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">shape</span></div>
+
+<div class="viewcode-block" id="Network.train"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Trains a neural network without checking for cost and accuracy. This is</span>
+<span class="sd">        the fastest method of training, but requires the user to perform all</span>
+<span class="sd">        calculations for errors and accuracy.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param epochs: Integer representing the number of epochs to run</span>
+<span class="sd">            :param data: A 2D numpy.array with the data used to train the</span>
+<span class="sd">                         network</span>
+<span class="sd">            :param targets: A 2D numpy.array with the targets of the data.</span>
+<span class="sd">                            Should have one row per observation and one column</span>
+<span class="sd">                            per output neuron in the network.</span>
+<span class="sd">            :param learning_rate: A float representing the learning rate of the</span>
+<span class="sd">                                  network.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict containing the updated weigths, biases, final cost and final</span>
+<span class="sd">            activations.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_one_epoch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;updated_weights&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">biases</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;updated_biases&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;activations&#39;</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Cost: </span><span class="si">{results[&quot;cost&quot;]}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="Network.train_and_validate"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.train_and_validate">[docs]</a>    <span class="k">def</span> <span class="nf">train_and_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">train_targets</span><span class="p">,</span> <span class="n">val_data</span><span class="p">,</span>
+                           <span class="n">val_targets</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">test_targets</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">,</span>
+                           <span class="n">learning_rate</span><span class="p">,</span> <span class="n">print_status</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Trains and validates a network. This is useful to see the performance</span>
+<span class="sd">        of a network over epochs. Prints statuses and plots results at the end.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param epochs: Integer representing the number of epochs.</span>
+<span class="sd">            :param train_data: 2D numpy.array with the data used to train the</span>
+<span class="sd">                               network. Should ahve one row per observatio and</span>
+<span class="sd">                               one column per input neuron.</span>
+<span class="sd">            :param train_targets: 2D numpy.array with the targets of the</span>
+<span class="sd">                                  training data. Should have one row per</span>
+<span class="sd">                                  observation and one column per output neuron</span>
+<span class="sd">                                  in the network.</span>
+<span class="sd">            :param val_data: 2D numpy.array representing used to validate the</span>
+<span class="sd">                             network. Should have one row per observation and</span>
+<span class="sd">                             one column per input neuron.</span>
+<span class="sd">            :param val_targets: 2D numpy.array representing the validation</span>
+<span class="sd">                                targets. Should have one row per observation</span>
+<span class="sd">                                and one column per output neuron.</span>
+<span class="sd">            :param test_data: 2D numpy.arraay with the data used to test the</span>
+<span class="sd">                              network. Should have one row per observation and</span>
+<span class="sd">                              one column per input neuron.</span>
+<span class="sd">            :param test_targets: 2D numpy.array with the targets used to test</span>
+<span class="sd">                                 the network. Should have one row per</span>
+<span class="sd">                                 observation and one column per output neuron.</span>
+<span class="sd">            :param test_labels: List of labels of the test data. Labels</span>
+<span class="sd">                                represent the human-readable expected value.</span>
+<span class="sd">                                Should contain one row per observation.</span>
+<span class="sd">            :param learning_rate: Float representing the learning rate of the</span>
+<span class="sd">                                  network.</span>
+<span class="sd">            :param print_status: Boolean specififying if the status should be</span>
+<span class="sd">                                 printed as the network learns. If true, status</span>
+<span class="sd">                                 will be printed in epochs 1 - 10,</span>
+<span class="sd">                                 then 20 - 500 by tens, then all by one</span>
+<span class="sd">                                 hundreds.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A Pandas table with the results of each epoch, including train cost,</span>
+<span class="sd">            validation cost, test cost and test error.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">train_cost</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">val_cost</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">test_cost</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">test_error</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="c1"># Train one epoch</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_one_epoch</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_targets</span><span class="p">,</span>
+                                         <span class="n">learning_rate</span><span class="p">)</span>
+            <span class="c1"># train_cost = results[&#39;cost&#39;]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;updated_weights&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">biases</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;updated_biases&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;activations&#39;</span><span class="p">]</span>
+            <span class="n">train_cost</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span>
+            <span class="c1"># Check validation</span>
+            <span class="n">val_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">val_data</span><span class="p">)</span>
+            <span class="n">val_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_fun</span><span class="p">(</span><span class="n">val_targets</span><span class="p">,</span> <span class="n">val_predictions</span><span class="p">)</span>
+            <span class="c1"># check test</span>
+            <span class="n">test_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+            <span class="n">test_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_fun</span><span class="p">(</span><span class="n">test_targets</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+            <span class="n">test_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_error_rate</span><span class="p">(</span><span class="n">test_predictions</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">predict_fun</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">print_status</span><span class="p">:</span>
+                <span class="c1"># Generate messages</span>
+                <span class="n">train_cost_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">train_cost</span><span class="p">)</span>
+                <span class="n">test_cost_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_cost</span><span class="p">)</span>
+                <span class="n">val_cost_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val_cost</span><span class="p">)</span>
+                <span class="n">test_error_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_error</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;%&#39;</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Epoch: {epoch + 1}, &#39;</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Train cost: </span><span class="si">{train_cost_string}</span><span class="s1">, &#39;</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;Val cost: </span><span class="si">{val_cost_string}</span><span class="s1">, &#39;</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;Test cost: </span><span class="si">{test_cost_string}</span><span class="s1">, &#39;</span>
+                <span class="n">message</span> <span class="o">+=</span> <span class="n">f</span><span class="s1">&#39;Test error: </span><span class="si">{test_error_string}</span><span class="s1">&#39;</span>
+                <span class="c1"># Print first 10</span>
+                <span class="k">if</span> <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="c1"># Print every 10 up to 500</span>
+                <span class="k">elif</span> <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">500</span> <span class="ow">and</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="c1"># Print every 100 after 500</span>
+                <span class="k">elif</span> <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">500</span> <span class="ow">and</span> <span class="p">(</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">epoch</span> <span class="o">==</span> <span class="n">epochs</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Final results:&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;train_cost&#39;</span><span class="p">:</span> <span class="n">train_cost</span><span class="p">,</span>
+                                <span class="s1">&#39;val_cost&#39;</span><span class="p">:</span> <span class="n">val_cost</span><span class="p">,</span>
+                                <span class="s1">&#39;test_cost&#39;</span><span class="p">:</span> <span class="n">test_cost</span><span class="p">,</span>
+                                <span class="s1">&#39;test_error&#39;</span><span class="p">:</span> <span class="n">test_error</span><span class="p">})</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+        <span class="n">results_table</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results_table</span></div>
+
+<div class="viewcode-block" id="Network.run_one_epoch"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.run_one_epoch">[docs]</a>    <span class="k">def</span> <span class="nf">run_one_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Runs a single epoch of the network.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param data: 2D numpy.array with data to train the newtwork with.</span>
+<span class="sd">                         Should have one row per observation and one column per</span>
+<span class="sd">                         input neuron.</span>
+<span class="sd">            :param targets: 2D numpy.array with the expected targets of the</span>
+<span class="sd">                            data. Should have one row per observation and one</span>
+<span class="sd">                            column per output neuron.</span>
+<span class="sd">            :param learning_rate: Flot representig the learning rate of the</span>
+<span class="sd">                                  network.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dict with the updated weights, biases, activations and cost.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Feed forward steps</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">feed_forward_vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">activation_fun</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">activation_derivative_fun</span><span class="p">)</span>
+        <span class="n">activations</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;activations&#39;</span><span class="p">]</span>
+        <span class="n">derivatives</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;derivatives&#39;</span><span class="p">]</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost_fun</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+        <span class="c1"># print(f&#39;Cost: {cost}&#39;)</span>
+
+        <span class="c1"># Calculate errors</span>
+        <span class="c1"># delta_cost = cost_derivative_fun(targets, ff[&#39;activations&#39;][-1])</span>
+        <span class="c1"># Output of L-1 * weights for L</span>
+        <span class="n">weighted_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">activations</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+        <span class="n">output_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_error_fun</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">y_predicted</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span>
+            <span class="n">cost_derivative_fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_derivative_fun</span><span class="p">,</span>
+            <span class="n">activation_derivative_fun</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation_derivative_fun</span><span class="p">,</span>
+            <span class="n">weighted_input</span><span class="o">=</span><span class="n">weighted_input</span><span class="p">)</span>
+        <span class="c1"># Back propagate errors for l+1 - L-1</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backpropagate_errors_fun</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                               <span class="n">derivatives</span><span class="o">=</span><span class="n">derivatives</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                               <span class="n">output_errors</span><span class="o">=</span><span class="n">output_error</span><span class="p">)</span>
+        <span class="c1"># update weights and biases</span>
+        <span class="n">delta_biases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_partial_derivatives_fun</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+        <span class="n">updated_biases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updated_biases_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">,</span> <span class="n">delta_biases</span><span class="p">,</span>
+                                                 <span class="n">learning_rate</span><span class="p">)</span>
+        <span class="n">delta_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_partial_derivatives_fun</span><span class="p">(</span><span class="n">activations</span><span class="p">,</span>
+                                                            <span class="n">errors</span><span class="p">)</span>
+        <span class="n">updated_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updated_weights_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">delta_weights</span><span class="p">,</span>
+                                                   <span class="n">learning_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;updated_weights&#39;</span><span class="p">:</span> <span class="n">updated_weights</span><span class="p">,</span>
+                <span class="s1">&#39;updated_biases&#39;</span><span class="p">:</span> <span class="n">updated_biases</span><span class="p">,</span>
+                <span class="s1">&#39;activations&#39;</span><span class="p">:</span> <span class="n">activations</span><span class="p">,</span>
+                <span class="s1">&#39;cost&#39;</span><span class="p">:</span> <span class="n">cost</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Network.predict"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Predicts a set of observations on a trained network.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param data: 2D numpy.array with the data to predict. Should have</span>
+<span class="sd">                         one row per observation and one column per input</span>
+<span class="sd">                         neuron.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A 2D numpy.array with the predictions. Output includes one row</span>
+<span class="sd">            per observation and one column per output neuron.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">feed_forward_vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">activation_fun</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">activation_derivative_fun</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">ff</span><span class="p">[</span><span class="s1">&#39;activations&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Network.get_error_rate"><a class="viewcode-back" href="../../ldl.html#ldl.network.Network.get_error_rate">[docs]</a>    <span class="k">def</span> <span class="nf">get_error_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">predict_function</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculates the error rate of predictions compared to targets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            :param predictions: Usually a numpy.array of output from a neural</span>
+<span class="sd">                                network.</span>
+<span class="sd">            :param targets: A numpy.array of targets from a neural network. In some</span>
+<span class="sd">                            cases, this can be an array. In others it may be a</span>
+<span class="sd">                            class.</span>
+<span class="sd">            :param predict_function: A function that returns the prediction from</span>
+<span class="sd">                                     the output of a neural network. This should</span>
+<span class="sd">                                     return a value that can be compared for</span>
+<span class="sd">                                     equality with the targets.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A float representing the percent error rate for the predictions.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">num_observations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># See which predictions are correct</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">predictions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">predict_function</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span> <span class="o">==</span> <span class="n">targets</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+                <span class="n">correct</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># The percent that were incorrectly classified</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">correct</span> <span class="o">/</span> <span class="n">num_observations</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Leo Godin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

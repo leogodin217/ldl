@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ldl package &mdash; LDL Learn Deep Learning 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LDL Learn Deep Learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ldl package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ldl.algorithms">ldl.algorithms module</a></li>
+<li><a class="reference internal" href="#module-ldl.network">ldl.network module</a></li>
+<li><a class="reference internal" href="#module-ldl.predictions">ldl.predictions module</a></li>
+<li><a class="reference internal" href="#module-ldl.utitlities">ldl.utitlities module</a></li>
+<li><a class="reference internal" href="#module-ldl">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LDL Learn Deep Learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ldl package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ldl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ldl-package">
+<h1>ldl package<a class="headerlink" href="#ldl-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ldl.algorithms">
+<span id="ldl-algorithms-module"></span><h2>ldl.algorithms module<a class="headerlink" href="#module-ldl.algorithms" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ldl.algorithms.backpropagate_errors">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">backpropagate_errors</code><span class="sig-paren">(</span><em>weights</em>, <em>derivatives</em>, <em>output_errors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#backpropagate_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.backpropagate_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backpropagates errors through all the layers, except the input layer.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param weights:</th><td class="field-body">A list of 2D numpy arrays representing the weights for
+each layer.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param derivatives:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A list of 2D numpy.arrays representing the derivatives
+fore each layer except the input layer. Each array
+contains one row per observation and one column per
+neuron in the layer.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param output_errors:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A 2D numpy.array representing the errors fo the
+output error. One row per observation and one column
+for each output neuron.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 2D numpy.arrays representing the errors for each layer
+except the input layer. Each array contains one row per observation and
+one column for each neuron in the layer.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.feed_forward_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">feed_forward_vec</code><span class="sig-paren">(</span><em>data</em>, <em>weights</em>, <em>biases</em>, <em>activation_fun</em>, <em>derivative_fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#feed_forward_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.feed_forward_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the feed forward portion of the neural network in a vectorized
+manner.
+<strong>*</strong> This function could use more tests of the algorithm*****</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param:</th><td class="field-body">data: 2D numpy.array with one row per observation and one
+column per feature</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param weights:</th><td class="field-body">List of 2D numpy.arrays with the weights for each
+neuron.
+Each item should have dimension l+1 X l.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param biases:</th><td class="field-body">List of 2D numpy.arrays with the biases for each neuron.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param activation_fun:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A function reference for the vectorized
+activation function. It must handle all
+obserations in a single call.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param derivative_fun:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A function reference for the vectorized
+derivative function. This is needed so we
+can calculate the derivative for later use
+in back propagation.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A dict with activations and derivatives of each neuron.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_bias_partial_derivatives_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_bias_partial_derivatives_vec</code><span class="sig-paren">(</span><em>errors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_bias_partial_derivatives_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_bias_partial_derivatives_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the partial derivatives for each neuron bias. This is equal to
+the mean error of each neuron.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param errors:</th><td class="field-body">A list of 2D numpy.arrays with the errors for each
+layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 2D numpy.arrays with the partial derivatives of all biases.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_relu_biases">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_relu_biases</code><span class="sig-paren">(</span><em>layers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_relu_biases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_relu_biases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates optimum starting bias for relu-activated networks. This is
+simply a bunch of zeros.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param shape:</th><td class="field-body">A list of ints representign the size of each layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 1D numpy.arrays representing the biases</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_relu_weights">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_relu_weights</code><span class="sig-paren">(</span><em>layers</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_relu_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_relu_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates optimized random weights for a relu-activated network using the
+formula devised by He et al (2016) <a class="reference external" href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/He_Delving_Deep_into_ICCV_2015_paper.pdf">https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/He_Delving_Deep_into_ICCV_2015_paper.pdf</a>
+initializes weights for each layer to a normal distribution with mean=0
+and standard deviation = sqrt(2/nl) where nl=number of input neurons to the
+layer</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param layers:</th><td class="field-body">A list of ints representing the number of neurons in
+each layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 2D numpy.arrays</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_updated_biases_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_updated_biases_vec</code><span class="sig-paren">(</span><em>biases</em>, <em>delta_biases</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_updated_biases_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_updated_biases_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the biases for a network after gradient descent has calculated the
+partial derivatives of each bias.
+new_bias = bias - learning rate * delta_bias</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param biases:</th><td class="field-body">A list of 1D numpy.arrays representing the current
+biases</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param delta_biases:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A list of 1D numpy.arrays representing the partial
+derivatives of the biases after gradient descent.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param learning_rate:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A numeric value to multiply the change by.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 1D numpy.arrays representing the new biases</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_updated_weights_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_updated_weights_vec</code><span class="sig-paren">(</span><em>weights</em>, <em>delta_weights</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_updated_weights_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_updated_weights_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the weights for a network after gradient descent has calculated the
+partial derivatives of each weight.
+new_weight = weight - learning rate * delta_weight</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param weights:</th><td class="field-body">A list of 2D numpy.arrays representing the current weights</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param delta_biases:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A list of 2D numpy.arrays representing the partial
+derivatives of the weights after gradient descent.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param learning_rate:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A numeric value to multiply the change by.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of 2D numpy.arrays representing the new weights</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.get_weight_partial_derivatives_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">get_weight_partial_derivatives_vec</code><span class="sig-paren">(</span><em>activations</em>, <em>errors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#get_weight_partial_derivatives_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.get_weight_partial_derivatives_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the partial derivatives for each weight. This is equal to the
+activation of input times the error of the output.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param activations:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A list of 2D numpy.arrays representing the
+activations for all observations, including the
+input layer.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param errors:</th><td class="field-body">A list of 2D numpy.arrays with errors for each layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Returns:
+A list of 2D numpy.arrays with the partial derivatives of each weight.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.layer_error_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">layer_error_vec</code><span class="sig-paren">(</span><em>weights</em>, <em>errors</em>, <em>derivatives</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#layer_error_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.layer_error_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vectorized calculation of error for a single layer.</p>
+<dl class="docutils">
+<dt>Params:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param weights:</th><td class="field-body">2D numpy.array representing the input weights for l+1.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param errors:</th><td class="field-body">2D numpy.array representing the errors for l+1. One row
+for each observation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param derivatives:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">numpy.array representing the derivatives of the
+current layer. One row for each observation.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A 2D numpy.array representing the errors for each neuron in a single
+layer. One row per observation and one column for each neuron.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.output_error_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">output_error_vec</code><span class="sig-paren">(</span><em>y</em>, <em>y_predicted</em>, <em>cost_derivative_fun</em>, <em>activation_derivative_fun</em>, <em>weighted_input</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#output_error_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.output_error_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vectorized calculation of the error of the output layer depending on the
+derivatives of the cost function and the activation functions.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param y:</th><td class="field-body">Expected values of the output layer</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param y_predicted:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Actual values of the output layer</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param cost_derivative_fun:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Function that calculates the derivative
+of the cost function depending on the
+activations of the output layer.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param activation_derivative_fun:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Function that calculates the
+derivative of the activation
+of the output layer.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param weigted_input:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A 2D numpy.array with the weighted input to the
+output layer. Holds one row per observation and one
+column per output neuron.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>2D numpy.array holding the error of each neuron in the output layer.
+One row for each observation, one column per neuron in the output
+layer.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.quadradic_cost_derivative_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">quadradic_cost_derivative_vec</code><span class="sig-paren">(</span><em>y</em>, <em>y_predicted</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#quadradic_cost_derivative_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.quadradic_cost_derivative_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates to partial derivative of the cost function with respect to
+each output neuron.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param y:</th><td class="field-body">2D numpy.array with the expected values of all observations.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param y_predicted:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">2D numpy.array of same shape as y, with predicted
+values for all observations.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>2D numpy array with the partial derivatives of the cust function.
+Should have one row per observation and one column per output neuron.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.quadradic_cost_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">quadradic_cost_vec</code><span class="sig-paren">(</span><em>y</em>, <em>y_predicted</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#quadradic_cost_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.quadradic_cost_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the quadradic cost function in a vectorized manner. The
+Quadradic Cost function is the same as mean-squared error. In particular,
+it sums the squared errors for each output class, then averages them
+over the entire output. Both formulas below are expressing the same thing.
+y = expected output and y_predicted = actual output.
+y(x) = y, AL = y_predicted = output of last activation layer</p>
+<p>cost = 1/2M SUM(LENGTH(y - y_predicted)^2)
+cost = 1/2M SUM(LENGTH(y(x) - AL)^2)</p>
+<p>This formula is great, because it is easy to calculate and its derivative
+is simply</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param y:</th><td class="field-body">2D numpy.array with the expected values for all observations.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param y_hat:</th><td class="field-body">2D numpy.array of same shape as y, with predicted values for
+all observations.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A decimal representing the average error for all observations.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.relu_derivative_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">relu_derivative_vec</code><span class="sig-paren">(</span><em>weighted_input</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#relu_derivative_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.relu_derivative_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vectorized differential of the rectified linear unit activation function.
+Differentiates the entire layer for all observations.
+Simply returns 1 for values &gt; 0 and 0 for values &lt;= 0</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param activations:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">2D numpy.array of layer activations for the layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>2D numpy.array with derivative of RelU for all values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ldl.algorithms.relu_vec">
+<code class="descclassname">ldl.algorithms.</code><code class="descname">relu_vec</code><span class="sig-paren">(</span><em>weighted_input</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/algorithms.html#relu_vec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.algorithms.relu_vec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vectorized rectified linear unit acativation function that calculated
+the activation based on weighted input.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param weighted_input:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">2D array representing the activation of the
+previous layer multipled by the weights to the current layer.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>2D array with all activations according to RelU.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ldl.network">
+<span id="ldl-network-module"></span><h2>ldl.network module<a class="headerlink" href="#module-ldl.network" title="Permalink to this headline">¶</a></h2>
+<p>Neural network structure that encapsulates the needed funality to build,
+train and predict.</p>
+<dl class="class">
+<dt id="ldl.network.Network">
+<em class="property">class </em><code class="descclassname">ldl.network.</code><code class="descname">Network</code><span class="sig-paren">(</span><em>weights</em>, <em>biases</em>, <em>name='default'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Defines the network topology and manages operations. Many functions used
+in the network can be overridden.</p>
+<dl class="method">
+<dt id="ldl.network.Network.get_error_rate">
+<code class="descname">get_error_rate</code><span class="sig-paren">(</span><em>predictions</em>, <em>targets</em>, <em>predict_function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.get_error_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.get_error_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the error rate of predictions compared to targets.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param predictions:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Usually a numpy.array of output from a neural
+network.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param targets:</th><td class="field-body">A numpy.array of targets from a neural network. In some
+cases, this can be an array. In others it may be a
+class.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param predict_function:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A function that returns the prediction from
+the output of a neural network. This should
+return a value that can be compared for
+equality with the targets.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A float representing the percent error rate for the predictions.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ldl.network.Network.get_shape">
+<code class="descname">get_shape</code><span class="sig-paren">(</span><em>weights</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.get_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.get_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the shape of the network from the weights</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param weights:</th><td class="field-body">A list of 2D numpy arrays representing the weights
+of the network</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A list of ints, representing the shape of the network.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ldl.network.Network.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts a set of observations on a trained network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body">2D numpy.array with the data to predict. Should have
+one row per observation and one column per input
+neuron.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A 2D numpy.array with the predictions. Output includes one row
+per observation and one column per output neuron.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ldl.network.Network.run_one_epoch">
+<code class="descname">run_one_epoch</code><span class="sig-paren">(</span><em>data</em>, <em>targets</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.run_one_epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.run_one_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a single epoch of the network.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body">2D numpy.array with data to train the newtwork with.
+Should have one row per observation and one column per
+input neuron.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param targets:</th><td class="field-body">2D numpy.array with the expected targets of the
+data. Should have one row per observation and one
+column per output neuron.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param learning_rate:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Flot representig the learning rate of the
+network.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A dict with the updated weights, biases, activations and cost.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ldl.network.Network.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>epochs</em>, <em>data</em>, <em>targets</em>, <em>learning_rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains a neural network without checking for cost and accuracy. This is
+the fastest method of training, but requires the user to perform all
+calculations for errors and accuracy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param epochs:</th><td class="field-body">Integer representing the number of epochs to run</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param data:</th><td class="field-body">A 2D numpy.array with the data used to train the
+network</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param targets:</th><td class="field-body">A 2D numpy.array with the targets of the data.
+Should have one row per observation and one column
+per output neuron in the network.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param learning_rate:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A float representing the learning rate of the
+network.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A dict containing the updated weigths, biases, final cost and final
+activations.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ldl.network.Network.train_and_validate">
+<code class="descname">train_and_validate</code><span class="sig-paren">(</span><em>epochs</em>, <em>train_data</em>, <em>train_targets</em>, <em>val_data</em>, <em>val_targets</em>, <em>test_data</em>, <em>test_targets</em>, <em>test_labels</em>, <em>learning_rate</em>, <em>print_status=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/network.html#Network.train_and_validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.network.Network.train_and_validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains and validates a network. This is useful to see the performance
+of a network over epochs. Prints statuses and plots results at the end.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param epochs:</th><td class="field-body">Integer representing the number of epochs.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param train_data:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">2D numpy.array with the data used to train the
+network. Should ahve one row per observatio and
+one column per input neuron.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param train_targets:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">2D numpy.array with the targets of the
+training data. Should have one row per
+observation and one column per output neuron
+in the network.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param val_data:</th><td class="field-body">2D numpy.array representing used to validate the
+network. Should have one row per observation and
+one column per input neuron.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param val_targets:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">2D numpy.array representing the validation
+targets. Should have one row per observation
+and one column per output neuron.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param test_data:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">2D numpy.arraay with the data used to test the
+network. Should have one row per observation and
+one column per input neuron.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param test_targets:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">2D numpy.array with the targets used to test
+the network. Should have one row per
+observation and one column per output neuron.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param test_labels:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">List of labels of the test data. Labels
+represent the human-readable expected value.
+Should contain one row per observation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param learning_rate:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Float representing the learning rate of the
+network.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param print_status:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Boolean specififying if the status should be
+printed as the network learns. If true, status
+will be printed in epochs 1 - 10,
+then 20 - 500 by tens, then all by one
+hundreds.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>A Pandas table with the results of each epoch, including train cost,
+validation cost, test cost and test error.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ldl.predictions">
+<span id="ldl-predictions-module"></span><h2>ldl.predictions module<a class="headerlink" href="#module-ldl.predictions" title="Permalink to this headline">¶</a></h2>
+<p>Holds prediction functions. These are separated, because each use case will
+probably have a unique prediction function.</p>
+<dl class="function">
+<dt id="ldl.predictions.predict_digit">
+<code class="descclassname">ldl.predictions.</code><code class="descname">predict_digit</code><span class="sig-paren">(</span><em>output</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/predictions.html#predict_digit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.predictions.predict_digit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts a digit 0-9 from an 1D numpy array of output values.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param output:</th><td class="field-body">1D numpy.array representing the output of a 0-9
+classification.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>Integer representing the digit</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ldl.utitlities">
+<span id="ldl-utitlities-module"></span><h2>ldl.utitlities module<a class="headerlink" href="#module-ldl.utitlities" title="Permalink to this headline">¶</a></h2>
+<p>Utilitites not directly involved in training a neural network</p>
+<dl class="function">
+<dt id="ldl.utitlities.normalize_2d_array">
+<code class="descclassname">ldl.utitlities.</code><code class="descname">normalize_2d_array</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ldl/utitlities.html#normalize_2d_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ldl.utitlities.normalize_2d_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes a 2D array to values betwen 0 and 1 for each column, using
+min/max normalization.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body">A 2D numpy.array</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd>2D numpy.array with data normulized by column</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ldl">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ldl" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Leo Godin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
