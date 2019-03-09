@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ldl.algorithms &mdash; LDL Learn Deep Learning 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> LDL Learn Deep Learning
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">LDL Learn Deep Learning</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ldl.algorithms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ldl.algorithms</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Algorithms requried to train a neural network.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="feed_forward_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.feed_forward_vec">[docs]</a><span class="k">def</span> <span class="nf">feed_forward_vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">biases</span><span class="p">,</span> <span class="n">activation_fun</span><span class="p">,</span>
+                     <span class="n">derivative_fun</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Performs the feed forward portion of the neural network in a vectorized</span>
+<span class="sd">    manner.</span>
+<span class="sd">    ***** This function could use more tests of the algorithm*****</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param: data: 2D numpy.array with one row per observation and one</span>
+<span class="sd">                      column per feature</span>
+<span class="sd">        :param weights: List of 2D numpy.arrays with the weights for each</span>
+<span class="sd">                        neuron.</span>
+<span class="sd">                        Each item should have dimension l+1 X l.</span>
+<span class="sd">        :param biases: List of 2D numpy.arrays with the biases for each neuron.</span>
+<span class="sd">        :param activation_fun: A function reference for the vectorized</span>
+<span class="sd">                                    activation function. It must handle all</span>
+<span class="sd">                                    obserations in a single call.</span>
+<span class="sd">        :param derivative_fun: A function reference for the vectorized</span>
+<span class="sd">                                    derivative function. This is needed so we</span>
+<span class="sd">                                    can calculate the derivative for later use</span>
+<span class="sd">                                    in back propagation.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A dict with activations and derivatives of each neuron.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Cacculate the weighted input from layer to layer 2</span>
+    <span class="n">weighted_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span> <span class="o">+</span> <span class="n">biases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">activation</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Store activations for each layer, so they can be used in backpropagation</span>
+    <span class="n">activations</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Input layer is added as-is</span>
+    <span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="c1"># Store the derivatives for each layer except the input layer so they</span>
+    <span class="c1"># can be used in backpropagation</span>
+    <span class="n">derivatives</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop over the weights to find activations and then calculate the next</span>
+    <span class="c1"># weighted input</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="c1"># Since we already have weighted input, we just need to calculate</span>
+        <span class="c1"># activation.</span>
+        <span class="n">activation</span> <span class="o">=</span> <span class="n">activation_fun</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">)</span>
+        <span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+        <span class="n">derivative</span> <span class="o">=</span> <span class="n">derivative_fun</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">)</span>
+        <span class="n">derivatives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">derivative</span><span class="p">)</span>
+
+        <span class="n">weighted_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span>
+                                   <span class="n">weight</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span> <span class="o">+</span> <span class="n">biases</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Calculate the final activation</span>
+    <span class="n">output_activation</span> <span class="o">=</span> <span class="n">activation_fun</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">)</span>
+    <span class="n">activations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_activation</span><span class="p">)</span>
+    <span class="n">output_derivative</span> <span class="o">=</span> <span class="n">derivative_fun</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">)</span>
+    <span class="n">derivatives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_derivative</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;activations&#39;</span><span class="p">:</span> <span class="n">activations</span><span class="p">,</span> <span class="s1">&#39;derivatives&#39;</span><span class="p">:</span> <span class="n">derivatives</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="relu_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.relu_vec">[docs]</a><span class="k">def</span> <span class="nf">relu_vec</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Vectorized rectified linear unit acativation function that calculated</span>
+<span class="sd">    the activation based on weighted input.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param weighted_input: 2D array representing the activation of the</span>
+<span class="sd">               previous layer multipled by the weights to the current layer.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        2D array with all activations according to RelU.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Change all negative values to 0. Here we use a trick where logical are</span>
+    <span class="c1"># coerced to 0 or 1</span>
+    <span class="k">return</span> <span class="n">weighted_input</span> <span class="o">*</span> <span class="p">(</span><span class="n">weighted_input</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="relu_derivative_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.relu_derivative_vec">[docs]</a><span class="k">def</span> <span class="nf">relu_derivative_vec</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Vectorized differential of the rectified linear unit activation function.</span>
+<span class="sd">    Differentiates the entire layer for all observations.</span>
+<span class="sd">    Simply returns 1 for values &gt; 0 and 0 for values &lt;= 0</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param activations: 2D numpy.array of layer activations for the layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        2D numpy.array with derivative of RelU for all values.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Set default to ones, then set everything &lt;= 0 to 0</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">weighted_input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">weighted_input</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="quadradic_cost_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.quadradic_cost_vec">[docs]</a><span class="k">def</span> <span class="nf">quadradic_cost_vec</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the quadradic cost function in a vectorized manner. The</span>
+<span class="sd">    Quadradic Cost function is the same as mean-squared error. In particular,</span>
+<span class="sd">    it sums the squared errors for each output class, then averages them</span>
+<span class="sd">    over the entire output. Both formulas below are expressing the same thing.</span>
+<span class="sd">    y = expected output and y_predicted = actual output.</span>
+<span class="sd">    y(x) = y, AL = y_predicted = output of last activation layer</span>
+
+<span class="sd">    cost = 1/2M SUM(LENGTH(y - y_predicted)^2)</span>
+<span class="sd">    cost = 1/2M SUM(LENGTH(y(x) - AL)^2)</span>
+
+<span class="sd">    This formula is great, because it is easy to calculate and its derivative</span>
+<span class="sd">    is simply</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param y: 2D numpy.array with the expected values for all observations.</span>
+<span class="sd">        :param y_hat: 2D numpy.array of same shape as y, with predicted values for</span>
+<span class="sd">                      all observations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A decimal representing the average error for all observations.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Subtract predicted from expected</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_predicted</span>
+    <span class="c1"># Square the differences</span>
+    <span class="n">squares</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Get the sum of squared errors for each observation</span>
+    <span class="n">sum_of_squares</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">squares</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># To carry out the formula, LENGTH(y - y_predicted) includes finding the</span>
+    <span class="c1"># square root of the squared differences. Then, the cost function takes</span>
+    <span class="c1"># the square. This means we can skip both steps since squaring a square</span>
+    <span class="c1"># root returns the original value.</span>
+    <span class="c1"># Calculate final average cost, considering we should divde each square</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sum_of_squares</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cost</span></div>
+
+
+<div class="viewcode-block" id="quadradic_cost_derivative_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.quadradic_cost_derivative_vec">[docs]</a><span class="k">def</span> <span class="nf">quadradic_cost_derivative_vec</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates to partial derivative of the cost function with respect to</span>
+<span class="sd">    each output neuron.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param y: 2D numpy.array with the expected values of all observations.</span>
+<span class="sd">        :param y_predicted: 2D numpy.array of same shape as y, with predicted</span>
+<span class="sd">                            values for all observations.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        2D numpy array with the partial derivatives of the cust function.</span>
+<span class="sd">        Should have one row per observation and one column per output neuron.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Notice that it is y_predicted - y, not y - y_predicted as it is in the</span>
+    <span class="c1"># cost function. In the reverse order, we would be adding to our overall</span>
+    <span class="c1"># cost instead of decreasing it.</span>
+    <span class="k">return</span> <span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="output_error_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.output_error_vec">[docs]</a><span class="k">def</span> <span class="nf">output_error_vec</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">cost_derivative_fun</span><span class="p">,</span>
+                     <span class="n">activation_derivative_fun</span><span class="p">,</span> <span class="n">weighted_input</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Vectorized calculation of the error of the output layer depending on the</span>
+<span class="sd">    derivatives of the cost function and the activation functions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param y: Expected values of the output layer</span>
+<span class="sd">        :param y_predicted: Actual values of the output layer</span>
+<span class="sd">        :param cost_derivative_fun: Function that calculates the derivative</span>
+<span class="sd">                                         of the cost function depending on the</span>
+<span class="sd">                                         activations of the output layer.</span>
+<span class="sd">        :param activation_derivative_fun: Function that calculates the</span>
+<span class="sd">                                               derivative of the activation</span>
+<span class="sd">                                               of the output layer.</span>
+<span class="sd">        :param weigted_input: A 2D numpy.array with the weighted input to the</span>
+<span class="sd">                              output layer. Holds one row per observation and one</span>
+<span class="sd">                              column per output neuron.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        2D numpy.array holding the error of each neuron in the output layer.</span>
+<span class="sd">        One row for each observation, one column per neuron in the output</span>
+<span class="sd">        layer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">cost_derivative</span> <span class="o">=</span> <span class="n">cost_derivative_fun</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">)</span>
+    <span class="n">activation_derivative</span> <span class="o">=</span> <span class="n">activation_derivative_fun</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">)</span>
+    <span class="c1"># Component-wise product</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">cost_derivative</span> <span class="o">*</span> <span class="n">activation_derivative</span>
+    <span class="k">return</span> <span class="n">error</span></div>
+
+
+<div class="viewcode-block" id="layer_error_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.layer_error_vec">[docs]</a><span class="k">def</span> <span class="nf">layer_error_vec</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">derivatives</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Vectorized calculation of error for a single layer.</span>
+
+<span class="sd">    Params:</span>
+<span class="sd">        :param weights: 2D numpy.array representing the input weights for l+1.</span>
+<span class="sd">        :param errors: 2D numpy.array representing the errors for l+1. One row</span>
+<span class="sd">                       for each observation.</span>
+<span class="sd">        :param derivatives: numpy.array representing the derivatives of the</span>
+<span class="sd">                            current layer. One row for each observation.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A 2D numpy.array representing the errors for each neuron in a single</span>
+<span class="sd">        layer. One row per observation and one column for each neuron.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># This determines te amount that the derivative impacts future layers</span>
+    <span class="n">weighted_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="c1"># Component-wise multiplication simply sets the error with respect to</span>
+    <span class="c1"># future layers</span>
+    <span class="n">layer_error</span> <span class="o">=</span> <span class="n">weighted_error</span> <span class="o">*</span> <span class="n">derivatives</span>
+    <span class="k">return</span> <span class="n">layer_error</span></div>
+
+
+<div class="viewcode-block" id="backpropagate_errors"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.backpropagate_errors">[docs]</a><span class="k">def</span> <span class="nf">backpropagate_errors</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">derivatives</span><span class="p">,</span> <span class="n">output_errors</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Backpropagates errors through all the layers, except the input layer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param weights: A list of 2D numpy arrays representing the weights for</span>
+<span class="sd">                        each layer.</span>
+<span class="sd">        :param derivatives: A list of 2D numpy.arrays representing the derivatives</span>
+<span class="sd">                            fore each layer except the input layer. Each array</span>
+<span class="sd">                            contains one row per observation and one column per</span>
+<span class="sd">                            neuron in the layer.</span>
+<span class="sd">        :param output_errors: A 2D numpy.array representing the errors fo the</span>
+<span class="sd">                              output error. One row per observation and one column</span>
+<span class="sd">                              for each output neuron.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 2D numpy.arrays representing the errors for each layer</span>
+<span class="sd">        except the input layer. Each array contains one row per observation and</span>
+<span class="sd">        one column for each neuron in the layer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Since backpropagation start from the end, we will reverse the lists</span>
+    <span class="n">weights_back</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Simple form of reversing a list</span>
+    <span class="n">derivatives_back</span> <span class="o">=</span> <span class="n">derivatives</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># We already have the errors for the output layer</span>
+    <span class="n">errors</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">output_errors</span><span class="p">)</span>
+
+    <span class="c1"># Loop through layers L-1 through layer 2 and get the errors</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights_back</span><span class="p">):</span>
+        <span class="n">layer_error</span> <span class="o">=</span> <span class="n">layer_error_vec</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                      <span class="n">derivatives</span><span class="o">=</span><span class="n">derivatives_back</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">layer_error</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">errors</span></div>
+
+
+<div class="viewcode-block" id="get_bias_partial_derivatives_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_bias_partial_derivatives_vec">[docs]</a><span class="k">def</span> <span class="nf">get_bias_partial_derivatives_vec</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the partial derivatives for each neuron bias. This is equal to</span>
+<span class="sd">    the mean error of each neuron.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param errors: A list of 2D numpy.arrays with the errors for each</span>
+<span class="sd">                       layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 2D numpy.arrays with the partial derivatives of all biases.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">delta_bias</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="n">delta_bias</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">delta_bias</span></div>
+
+
+<div class="viewcode-block" id="get_weight_partial_derivatives_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_weight_partial_derivatives_vec">[docs]</a><span class="k">def</span> <span class="nf">get_weight_partial_derivatives_vec</span><span class="p">(</span><span class="n">activations</span><span class="p">,</span> <span class="n">errors</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the partial derivatives for each weight. This is equal to the</span>
+<span class="sd">    activation of input times the error of the output.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param activations: A list of 2D numpy.arrays representing the</span>
+<span class="sd">                            activations for all observations, including the</span>
+<span class="sd">                            input layer.</span>
+<span class="sd">        :param errors: A list of 2D numpy.arrays with errors for each layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    A list of 2D numpy.arrays with the partial derivatives of each weight.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">delta_weights</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+        <span class="c1"># Calculate the sum of partial derivatives for all observations</span>
+        <span class="n">layer_delta_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">activations</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        <span class="c1"># Calculate the mean partial derivative</span>
+        <span class="n">observations</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">delta_weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer_delta_weights</span> <span class="o">/</span> <span class="n">observations</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta_weights</span></div>
+
+
+<div class="viewcode-block" id="get_updated_biases_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_updated_biases_vec">[docs]</a><span class="k">def</span> <span class="nf">get_updated_biases_vec</span><span class="p">(</span><span class="n">biases</span><span class="p">,</span> <span class="n">delta_biases</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Updates the biases for a network after gradient descent has calculated the</span>
+<span class="sd">    partial derivatives of each bias.</span>
+<span class="sd">    new_bias = bias - learning rate * delta_bias</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param biases: A list of 1D numpy.arrays representing the current</span>
+<span class="sd">                       biases</span>
+<span class="sd">        :param delta_biases: A list of 1D numpy.arrays representing the partial</span>
+<span class="sd">                             derivatives of the biases after gradient descent.</span>
+<span class="sd">        :param learning_rate: A numeric value to multiply the change by.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 1D numpy.arrays representing the new biases</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">new_bias</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop through the layers</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">bias</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">biases</span><span class="p">):</span>
+        <span class="c1"># Update the bias</span>
+        <span class="n">new_bias</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bias</span> <span class="o">-</span> <span class="p">(</span><span class="n">delta_biases</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">learning_rate</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">new_bias</span></div>
+
+
+<div class="viewcode-block" id="get_updated_weights_vec"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_updated_weights_vec">[docs]</a><span class="k">def</span> <span class="nf">get_updated_weights_vec</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">delta_weights</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Updates the weights for a network after gradient descent has calculated the</span>
+<span class="sd">    partial derivatives of each weight.</span>
+<span class="sd">    new_weight = weight - learning rate * delta_weight</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param weights: A list of 2D numpy.arrays representing the current weights</span>
+<span class="sd">        :param delta_biases: A list of 2D numpy.arrays representing the partial</span>
+<span class="sd">                             derivatives of the weights after gradient descent.</span>
+<span class="sd">        :param learning_rate: A numeric value to multiply the change by.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 2D numpy.arrays representing the new weights</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">new_weights</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop through the layers</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+        <span class="c1"># Update the weight</span>
+        <span class="n">new_weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span> <span class="o">-</span> <span class="p">(</span><span class="n">delta_weights</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">learning_rate</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">new_weights</span></div>
+
+
+<div class="viewcode-block" id="get_relu_biases"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_relu_biases">[docs]</a><span class="k">def</span> <span class="nf">get_relu_biases</span><span class="p">(</span><span class="n">layers</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates optimum starting bias for relu-activated networks. This is</span>
+<span class="sd">    simply a bunch of zeros.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param shape: A list of ints representign the size of each layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 1D numpy.arrays representing the biases</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">biases</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="c1"># Layer is an int describing the number of neurons in the layer</span>
+        <span class="n">biases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">layer</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">biases</span></div>
+
+
+<div class="viewcode-block" id="get_relu_weights"><a class="viewcode-back" href="../../ldl.html#ldl.algorithms.get_relu_weights">[docs]</a><span class="k">def</span> <span class="nf">get_relu_weights</span><span class="p">(</span><span class="n">layers</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates optimized random weights for a relu-activated network using the</span>
+<span class="sd">    formula devised by He et al (2016) https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/He_Delving_Deep_into_ICCV_2015_paper.pdf</span>
+<span class="sd">    initializes weights for each layer to a normal distribution with mean=0</span>
+<span class="sd">    and standard deviation = sqrt(2/nl) where nl=number of input neurons to the</span>
+<span class="sd">    layer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param layers: A list of ints representing the number of neurons in</span>
+<span class="sd">                       each layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of 2D numpy.arrays</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">standard_deviation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="c1"># Size is l out x l in</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">standard_deviation</span><span class="p">,</span>
+                                  <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layers</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weights</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Leo Godin
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

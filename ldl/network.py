@@ -22,10 +22,36 @@ import pandas as pd
 
 class Network:
     '''
-    Defines the network topology and manages operations
+    Defines the network topology and manages operations. Many functions used
+    in the network can be overridden.
     '''
 
     def __init__(self, weights, biases, name='default'):
+        '''
+        Initializes the network and functions. Many function defaults are set
+        on initialization. All can be overriden with dot notation. The
+        following functions can be overriden:
+        - activation_fun
+        - activation_derivative_fun
+        - cost_fun
+        - cost_derivative_fun
+        - output_error_fun
+        - backpropagate_errors_fun
+        - updated_biases_fun
+        - updated_weights_fun
+        - bias_partial_derivatives_fun
+        - weight_partial_derivatives_fun
+        - predict_fun
+
+        Args:
+            :param weights: A list of 2D numpy.arrays representing the weights
+                            for each layer. Each entry should have dimension
+                            l x l-1
+            :param biases: A list of 1D numpy.arrays representing the biases of
+                           each layer.
+            :param name: A string representing the name of the network. Useful
+                         when comparing multiple network architectures.
+        '''
         self.weights = weights
         self.biases = biases
         self.name = name
@@ -47,10 +73,12 @@ class Network:
         '''
         Gets the shape of the network from the weights
 
-        :param weights: A list of 2D numpy arrays representing the weights of
-                        the network
+        Args:
+            :param weights: A list of 2D numpy arrays representing the weights
+                            of the network
 
-        :returns A list of ints, representing the shape of the network.
+        Returns:
+            A list of ints, representing the shape of the network.
         '''
         shape = []
         # Weights always are of dimension l+ 1 x l. We can iterate the weights
@@ -63,19 +91,76 @@ class Network:
         return shape
 
     def train(self, epochs, data, targets, learning_rate):
-        # updated_weights = self.weights
-        # updated_biases = self.biases
+        '''
+        Trains a neural network without checking for cost and accuracy. This is
+        the fastest method of training, but requires the user to perform all
+        calculations for errors and accuracy.
+
+        Args:
+            :param epochs: Integer representing the number of epochs to run
+            :param data: A 2D numpy.array with the data used to train the
+                         network
+            :param targets: A 2D numpy.array with the targets of the data.
+                            Should have one row per observation and one column
+                            per output neuron in the network.
+            :param learning_rate: A float representing the learning rate of the
+                                  network.
+        Returns:
+            A dict containing the updated weigths, biases, final cost and final
+            activations.
+        '''
+
+        results = {}
         for epoch in range(epochs):
             results = self.run_one_epoch(data, targets, learning_rate)
             self.weights = results['updated_weights']
             self.biases = results['updated_biases']
             self.activations = results['activations']
             print(f'Cost: {results["cost"]}')
-        # return {'weights': updated_weights, 'biases': updated_biases}
+        return results
 
     def train_and_validate(self, epochs, train_data, train_targets, val_data,
                            val_targets, test_data, test_targets, test_labels,
                            learning_rate, print_status=True):
+        '''
+        Trains and validates a network. This is useful to see the performance
+        of a network over epochs. Prints statuses and plots results at the end.
+
+        Args:
+            :param epochs: Integer representing the number of epochs.
+            :param train_data: 2D numpy.array with the data used to train the
+                               network. Should ahve one row per observatio and
+                               one column per input neuron.
+            :param train_targets: 2D numpy.array with the targets of the
+                                  training data. Should have one row per
+                                  observation and one column per output neuron
+                                  in the network.
+            :param val_data: 2D numpy.array representing used to validate the
+                             network. Should have one row per observation and
+                             one column per input neuron.
+            :param val_targets: 2D numpy.array representing the validation
+                                targets. Should have one row per observation
+                                and one column per output neuron.
+            :param test_data: 2D numpy.arraay with the data used to test the
+                              network. Should have one row per observation and
+                              one column per input neuron.
+            :param test_targets: 2D numpy.array with the targets used to test
+                                 the network. Should have one row per
+                                 observation and one column per output neuron.
+            :param test_labels: List of labels of the test data. Labels
+                                represent the human-readable expected value.
+                                Should contain one row per observation.
+            :param learning_rate: Float representing the learning rate of the
+                                  network.
+            :param print_status: Boolean specififying if the status should be
+                                 printed as the network learns. If true, status
+                                 will be printed in epochs 1 - 10,
+                                 then 20 - 500 by tens, then all by one
+                                 hundreds.
+        Returns:
+            A Pandas table with the results of each epoch, including train cost,
+            validation cost, test cost and test error.
+        '''
         train_cost = ''
         val_cost = ''
         test_cost = ''
@@ -130,6 +215,22 @@ class Network:
         return results_table
 
     def run_one_epoch(self, data, targets, learning_rate):
+        '''
+        Runs a single epoch of the network.
+
+        Args:
+            :param data: 2D numpy.array with data to train the newtwork with.
+                         Should have one row per observation and one column per
+                         input neuron.
+            :param targets: 2D numpy.array with the expected targets of the
+                            data. Should have one row per observation and one
+                            column per output neuron.
+            :param learning_rate: Flot representig the learning rate of the
+                                  network.
+
+        Returns:
+            A dict with the updated weights, biases, activations and cost.
+        '''
         # Feed forward steps
         ff = feed_forward_vec(data, self.weights, self.biases,
                               self.activation_fun,
@@ -168,6 +269,18 @@ class Network:
                 'cost': cost}
 
     def predict(self, data):
+        '''
+        Predicts a set of observations on a trained network.
+
+        Args:
+            :param data: 2D numpy.array with the data to predict. Should have
+                         one row per observation and one column per input
+                         neuron.
+
+        Returns:
+            A 2D numpy.array with the predictions. Output includes one row
+            per observation and one column per output neuron.
+        '''
         ff = feed_forward_vec(data, self.weights, self.biases,
                               self.activation_fun,
                               self.activation_derivative_fun)
@@ -177,15 +290,18 @@ class Network:
         '''
         Calculates the error rate of predictions compared to targets.
 
-        :param predictions: Usually a numpy.array of output from a neural
-                            network.
-        :param targets: A numpy.array of targets from a neural network. In some
-                        cases, this can be an array. In others it may be a
-                        class.
-        :param predict_function: A function that returns the prediction from
-                                 the output of a neural network. This should
-                                 return a value that can be compared for
-                                 equality with the targets.
+        Args:
+            :param predictions: Usually a numpy.array of output from a neural
+                                network.
+            :param targets: A numpy.array of targets from a neural network. In some
+                            cases, this can be an array. In others it may be a
+                            class.
+            :param predict_function: A function that returns the prediction from
+                                     the output of a neural network. This should
+                                     return a value that can be compared for
+                                     equality with the targets.
+        Returns:
+            A float representing the percent error rate for the predictions.
         '''
         num_observations = len(predictions)
         correct = 0

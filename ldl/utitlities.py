@@ -9,9 +9,11 @@ def normalize_2d_array(data):
     Normalizes a 2D array to values betwen 0 and 1 for each column, using
     min/max normalization.
 
-    :param data: A 2D numpy.array
+    Args:
+        :param data: A 2D numpy.array
 
-    :returns A 2D numpy.array with data normulized by column
+    Returns:
+        2D numpy.array with data normulized by column
     '''
 
     # Get columnwise min and max
