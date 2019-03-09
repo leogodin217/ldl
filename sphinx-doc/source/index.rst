@@ -10,14 +10,17 @@ Welcome to LDL Learn Deep Learning's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-Test Main documentation
-=======================
+Getting Started
+===============
 
-Test next-level documentation
------------------------------
+Installation
+------------
 
-Test more next-level documentation
-----------------------------------
+LDL is configured as a package, but not uploaded to PyPy. To install, use the
+following pip command.
+
+pip install git+https://github.com/leogodin217/ldl.git
+
 
 Indices and tables
 ==================
