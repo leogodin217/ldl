@@ -81,6 +81,9 @@
 <li><a class="reference internal" href="#">Welcome to LDL Learn Deep Learning’s documentation!</a></li>
 <li><a class="reference internal" href="#getting-started">Getting Started</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#creating-a-network">Creating a network</a></li>
+<li><a class="reference internal" href="#training-a-network">Training a network</a></li>
+<li><a class="reference internal" href="#building-functions-from-scratch">Building functions from scratch</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -155,11 +158,79 @@
 </div>
 <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>LDL is a neural-network framework that makes it easier to create a neural
+network from scratch. By allowing data scientists to override important functions,
+LDL makes it easier to code the neural network. Through this method, an entire
+neural network can be coded from scratch, one piece at a time. Furthermore, each
+individual component can automatically be incorporated into a working network,
+without the need to have everything ready at once.</p>
+<p>LDL will not teach you about neural networks. Rather, it provides a playground
+for learning. If you need a resource for learning the basics of neural networks,
+I highly recommend <a class="reference external" href="http://neuralnetworksanddeeplearning.com">Neural Networks and Deep Learning</a></p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>LDL is configured as a package, but not uploaded to PyPy. To install, use the
 following pip command.</p>
 <p>pip install git+https://github.com/leogodin217/ldl.git</p>
+</div>
+<div class="section" id="creating-a-network">
+<h2>Creating a network<a class="headerlink" href="#creating-a-network" title="Permalink to this headline">¶</a></h2>
+<p>The basic class in LDL is the Network classs from ldl.network. This class handles
+all operations for training a network. A network takes weights, biases and a name
+as arguments. By default, the network will use Relu activation functions and the
+quadradic cost function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ldl.network</span> <span class="kn">import</span> <span class="n">Network</span>
+<span class="kn">from</span> <span class="nn">algorithms</span> <span class="kn">import</span> <span class="n">get_relu_weights</span><span class="p">,</span> <span class="n">get_relu_biases</span>
+<span class="c1"># A 12 x 10 x 5 network</span>
+<span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">get_relu_weights</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+<span class="n">biases</span> <span class="o">=</span> <span class="n">get_relu_biases</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+<span class="n">network</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">biases</span><span class="o">=</span><span class="n">biases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;12x10x5 Network&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="training-a-network">
+<h2>Training a network<a class="headerlink" href="#training-a-network" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to train a network is to use train_and_validate_network. This
+will train the network and show stats for train, val and test data. It will
+also plot a graph of cost and error over the epochs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Examples for a 12x10x5 network</span>
+<span class="n">epochs</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="n">train_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">val_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="n">val_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+<span class="n">test_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">test_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">train_and_validate</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="n">train_data</span><span class="p">,</span> <span class="n">train_targets</span><span class="p">,</span>
+                                     <span class="n">val_data</span><span class="p">,</span> <span class="n">val_targets</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span>
+                                     <span class="n">test_targets</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">,</span>
+                                     <span class="n">learning_rate</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-functions-from-scratch">
+<h2>Building functions from scratch<a class="headerlink" href="#building-functions-from-scratch" title="Permalink to this headline">¶</a></h2>
+<p>While LDL provides a framework for building a network, most functionality can
+be overridden with custom functions. All functions are stored internally
+in the network. To override a function, simply use dot notatio to provide
+your own function. Please read the documenation on the default functions to
+understand expected inputs and outputs.</p>
+<p>The following functions can be overridden.</p>
+<ul class="simple">
+<li>activation_fun</li>
+<li>activation_derivative_fun</li>
+<li>cost_fun</li>
+<li>cost_derivative_fun</li>
+<li>output_error_fun</li>
+<li>backpropagate_errors_fun</li>
+<li>updated_biases_fun</li>
+<li>updated_weights_fun</li>
+<li>bias_partial_derivatives_fun</li>
+<li>weight_partial_derivatives_fun</li>
+</ul>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
