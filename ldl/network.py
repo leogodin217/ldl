@@ -209,7 +209,8 @@ class Network:
             all_results.append({'train_cost': train_cost,
                                 'val_cost': val_cost,
                                 'test_cost': test_cost,
-                                'test_error': test_error})
+                                'test_error': test_error,
+                                'model': self.name})
         results_table = pd.DataFrame(all_results)
         results_table.plot(title=self.name)
         return results_table
