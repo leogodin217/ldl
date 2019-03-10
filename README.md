@@ -8,6 +8,28 @@ neural network can be coded from scratch, one piece at a time. Furthermore, each
 individual component can automatically be incorporated into a working network,
 without the need to have everything ready at once.
 
+
+## Why you should use LDL
+
+If you want to code a neural network from scratch, but find it too daunting to
+start from nothing, then LDL might be for you. Instead of coding the entire thing
+in one step, you can start with simple things like activation functions and derivative
+functions.
+
+If you want to practice vector programming, LDL might be for you. By implementing
+various functions of a neural network, you will learn to utilize matrix multiplication
+to perform incredible amounts of work. With a little patience, you will find that
+almost every step in training a neural network can be accomplished with matrix
+multiplication instead of for loops.
+
+## Why you should not use LDL
+
+If you want fast, production code, LDL is not for you. LDL is not intended for
+production work. It is entirely written in plain python with the use of Numpy for
+matrix multiplication and Pandas for holding and plotting results. Though the
+default methods are all verctorized, this is still very slow. If you need a
+production framework, I would recommend something like Pytorch or TensorFlow.
+
 LDL is well documented in the style of Read the Docs. To learn how to use LDL
 read documentation [here.](https://leogodin217.github.io/ldl/)
 
@@ -26,6 +48,13 @@ This README, covers the analysis of the network on the MNIST dataset.
 
 ## Exploratory Analysis
 
+When creating a neural network from scratch, implementing the code is only the
+first step. Effective starting weights and biases need to be created before a
+network will be successfully trained. My first attempts at training with random
+weights and biases resulted in a 90% error rate. After playing with the weights
+to make the range narrower and wider, I found that smaller weights were more likely
+to
+
 ### Weights and Biases
 
 
@@ -37,7 +66,7 @@ input data.
 
 Setup
 
-```python
+```
 from mnist import mnist
 from ldl.algorithms import *
 from ldl.utitlities import *
@@ -48,7 +77,7 @@ import numpy as np
 
 Data
 
-```python
+```
 # Get the data
 x_train, t_train, x_test, t_test = mnist.load()
 
@@ -82,7 +111,7 @@ epochs=2000
 One architecture. The same code is used for each architecture with only the shape
 and name changing.
 
-```python
+```
 shape = [784, 10, 10]
 biases = get_relu_biases(shape)
 weights = get_relu_weights(shape)
