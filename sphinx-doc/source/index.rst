@@ -82,11 +82,16 @@ Building functions from scratch
 
 While LDL provides a framework for building a network, most functionality can
 be overridden with custom functions. All functions are stored internally
-in the network. To override a function, simply use dot notatio to provide
+in the network. To override a function, simply use dot notation to provide
 your own function. Please read the documenation on the default functions to
 understand expected inputs and outputs.
 
-The following functions can be overridden.
+.. code-block:: python
+
+    network.activation_fun = my_custom_activation_fun
+
+The following functions can be overridden. When overriding the activation or
+cost function, be sure to also override the associated derivative functions.
 
 * activation_fun
 * activation_derivative_fun

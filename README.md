@@ -62,6 +62,10 @@ data set to test a basic neural network as it is well known and well researched.
 Modern algorithms achieve well over 99% accuracy at this time. It is unlikely
 that LDL will achieve 99%.
 
+Each row contains 784 columns representing the intensity of a grayscale 28x28 image.
+We will split the data into three sets. 40,000 for training, 10,000 for validation
+and 10,000 for test.
+
 ## Exploratory Analysis
 
 When creating a neural network from scratch, implementing the code is only the
@@ -248,8 +252,40 @@ weights = get_relu_weights(shape)
 epochs=10000
 ```
 
-We see that 0.2 provides the best learning
+We see that 0.3 provides the best learning
+
 
 ## Conclusion
 
-Conclude something.
+This was a challenging project, but I was glad to obtain > 97% accuracy on my
+custom-built neural network. Weight and bias initialization was critical in the
+results.
+
+The final architecture for the neural network is as follows:
+
+Layers: 3
+
+Input Neurons: 784
+
+Hidden Neurons: 100
+
+Output Neurons: 10
+
+Learning Rate: 0.3
+
+Epochs: 3700
+
+Activation Function: Relu
+
+Cost Function: Quadradic
+
+lassification Accuracy: 97.04
+
+I would like to add one final note on vectorization. All functions in LDL use
+vectorization where possible. Vectorization allows the network to train orders
+of magnitude faster. Without this, some of my tests would have taken days. For
+instance, the tests for learning rate ran 10,000 epochs across many learning rates.
+Though, I decided on four final learning rates, I have tested many more. To run
+these tests would have taken days and possibly weeks. I encourange anyone who
+wants to use LDL and write their own functions to focus on making the functions
+vectorized.
