@@ -41,7 +41,7 @@ production framework, I would recommend something like Pytorch or TensorFlow.
 
 ## Documentation
 LDL is well documented in the style of Read the Docs. To learn how to use LDL
-read documentation [here.](https://leogodin217.github.io/ldl/)
+read documentation [**here**.](https://leogodin217.github.io/ldl/)
 
 Three Juypter notebooks are provided in the github repository to show examples
 of using LDL.
