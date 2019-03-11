@@ -272,6 +272,7 @@ rate of 2.96%. One interesting note is that several of the plots show rising
 cost even without rising error rates. 0.3 shows the most dramtic of these patterns.
 
 ![Learning rate results](https://github.com/leogodin217/ldl/raw/master/images/learning_rate_results.png "Learning rate results")
+
 ## Conclusion
 
 This was a challenging project, but I was glad to obtain > 97% accuracy on my
