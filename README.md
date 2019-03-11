@@ -53,6 +53,9 @@ settings to classify the MNIST dataset.
 settings to classify the MNIST dataset.
 
 **From Scratch** - Shows how to implement your own functions for activation and cost.
+Also demonstrates how vectorized functions dramatically improve performance.
+
+**Weigts and Biases** - Shows experiments on initializing weights and biases.
 
 ### Data
 
@@ -252,9 +255,13 @@ weights = get_relu_weights(shape)
 epochs=10000
 ```
 
-We see that 0.3 provides the best learning
+**One test:** Others are the same, with different learning rates.
 
+We see that 0.3 provides the best outcome. Around epoch 4700, it hits an error
+rate of 2.96%. One interesting note is that several of the plots show rising
+cost even without rising error rates. 0.3 shows the most dramtic of these patterns.
 
+![Learning rate results](https://github.com/leogodin217/ldl/raw/master/images/learning_rate_results.png "Learning rate results")
 ## Conclusion
 
 This was a challenging project, but I was glad to obtain > 97% accuracy on my
@@ -273,7 +280,7 @@ Output Neurons: 10
 
 Learning Rate: 0.3
 
-Epochs: 3700
+Epochs: 4700
 
 Activation Function: Relu
 
