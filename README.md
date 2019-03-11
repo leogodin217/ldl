@@ -43,7 +43,7 @@ production framework, I would recommend something like Pytorch or TensorFlow.
 LDL is well documented in the style of Read the Docs. To learn how to use LDL
 read documentation [**here**.](https://leogodin217.github.io/ldl/)
 
-Three Juypter notebooks are provided in the github repository to show examples
+Four Juypter notebooks are provided in the github repository to show examples
 of using LDL.
 
 **Network Training** - Shows how to compare different learning rates using the default
@@ -68,6 +68,8 @@ that LDL will achieve 99%.
 Each row contains 784 columns representing the intensity of a grayscale 28x28 image.
 We will split the data into three sets. 40,000 for training, 10,000 for validation
 and 10,000 for test.
+
+![MNIST](https://github.com/leogodin217/ldl/raw/master/images/mnist_digits.png "MNIST")
 
 ## Exploratory Analysis
 
@@ -126,8 +128,8 @@ in the network. For MNIST, I used a three-layer network, with one hidden layer.
 Then, I tested five different configurations with increasing neurons in the hidden layer
 to see which one worked best.
 
-First, we want to see what architecture works best on the MNIST dataset. For this
-test, we will use the same method determining weights and biases for the Relu
+First, we want to see which architecture works best on the MNIST dataset. For this
+test, we will use the same method for determining weights and biases for the Relu
 activation function. We will use a utility function from LDL to normalize the
 input data.
 
@@ -257,6 +259,14 @@ epochs=10000
 
 **One test:** Others are the same, with different learning rates.
 
+```
+learning_rate = 0.03
+name = '784x100x10, Learning Rate 0.03'
+network = Network(weights=weights, biases=biases, name=name)
+three_neg_two_by_1000 = network.train_and_validate(epochs, train_data, train_targets, val_data, val_targets, test_data,
+                                                   test_targets, test_labels, learning_rate)
+```
+
 We see that 0.3 provides the best outcome. Around epoch 4700, it hits an error
 rate of 2.96%. One interesting note is that several of the plots show rising
 cost even without rising error rates. 0.3 shows the most dramtic of these patterns.
@@ -286,7 +296,7 @@ Activation Function: Relu
 
 Cost Function: Quadradic
 
-lassification Accuracy: 97.04
+Classification Accuracy: 97.04
 
 I would like to add one final note on vectorization. All functions in LDL use
 vectorization where possible. Vectorization allows the network to train orders
